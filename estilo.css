@@ -1,0 +1,140 @@
+/* ============================================
+   1. VARIABLES — el catálogo de piezas
+   ============================================ */
+   :root{
+  --color-anil-900: #0B2545;
+  --color-anil-700: #1B3A5C;
+  --color-anil-500: #2E5C8A;
+  --color-arena-100: #F5F0E6;
+  --color-arena-50:  #FBF9F4;
+  --color-texto: #1A1A1A;
+  --color-blanco: #FFFFFF;
+  --font-titulos: 'Poppins', sans-serif;
+  --font-cuerpo: 'Inter', sans-serif;
+
+  --texto-xl: 3rem;
+  --texto-lg: 2rem;
+  --texto-md: 1.5rem;
+  --texto-sm: 1rem;
+  --texto-xs: 0.875rem;
+
+  --espacio-xs: 0.5rem;
+  --espacio-sm: 1rem;
+  --espacio-md: 1.5rem;
+  --espacio-lg: 2.5rem;
+  --espacio-xl: 4rem;
+
+  --radio-borde: 8px;
+   }
+/* ============================================
+   2. Diseño experimental
+   ============================================ */
+   *{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+   }
+
+   body{
+    font-family: var(--font-cuerpo);
+    color: var(--color-texto);
+    background-color: var(--color-arena-50);
+    line-height: 1.6;
+   }
+
+   .cx-header {
+    background-color: var(--color-anil-900);
+    color: var(--color-blanco);
+    padding: var(--espacio-md) var(--espacio-lg);
+    text-align: center;
+   }
+   .header_titulo {
+    font-family: var(--font-titulos);
+    font-size: var(--texto-xl);
+    font-weight: 700;
+   }
+   .header_subtitulo {
+    font-family: var(--font-cuerpo);
+    font-size: var(--texto-sm);
+    max-width: 640px;
+    margin: var(--espacio-sm) auto 0;
+    color: var(--color-arena-50);
+   }
+   .hero {
+    padding: var(--espacio-xl) var(--espacio-lg);
+    text-align: center;
+    background-color: var(--color-arena-100);
+   }
+   -hero_titulo {
+    font-family: var(--font-titulos);
+    font-size: var(--texto-lg);
+    color: var(--color-anil-900);
+    font-weight: 600;
+   }
+   .hero_subtitulo {
+    font-family: var(--font-cuerpo);
+    font-size: var(--texto-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-anil-500);
+    margin-top: var(--espacio-xs);
+   }
+   
+   .hero_texto {
+    font-size: var(--texto-sm);
+  max-width: 600px;
+  margin: var(--espacio-sm) auto 0;
+   }
+
+   .sitio {
+  padding: var(--espacio-lg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+   .sitio_dato {
+    background-color: var(--color-blanco);
+    border-radius: var(--radio-borde);
+    padding: var(--espacio-md);
+    margin-bottom: var(--espacio-md);
+   }    
+   .sitio_dato-titulo {
+    font-family: var(--font-titulos);
+    font-size: var(--texto-md);
+    color: var(--color-anil-700);
+    margin-bottom: var(--espacio-xs);
+   }
+   .sitio_dato-texto {
+  font-size: var(--texto-sm);
+}
+/* ============================================
+   3. CTA + BOTÓN
+   ============================================ */
+
+   .cta {
+    text-align: center;
+    padding: var(--espacio-lg);
+   }
+
+   .cta_texto {
+    font-size: var(--texto-sm);
+    margin-bottom: var(--espacio-sm);
+   }
+   .cx-boton {
+    font-family: var(--font-cuerpo);
+    font-size: var(--texto-sm);
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radio-borde);
+    padding: var(--espacio-sm) var(--espacio-lg);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+   }
+
+   .cx-boton-primario {
+    background-color: var(--color-anil-700);
+    color: var(--color-blanco);
+   }
+   .cx-boton-primario:hover {
+    background-color: var(--color-anil-900);
+   }
