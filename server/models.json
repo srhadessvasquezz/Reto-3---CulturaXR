@@ -1,0 +1,42 @@
+[
+  {
+    "id": "piramide",
+    "name": "Pirámide de San Andrés",
+    "description": "Sitio arqueológico maya ubicado en el valle de Zapotitán, Testimonio del esplendor precolombino de El Salvador.",
+    "file": "/3d_models/piramide.glb",
+    "category": "arqueología",
+    "thumbnail": ""
+  },
+  {
+    "id": "volcan",
+    "name": "Volcán de Santa Ana",
+    "description": "El volcán más alto de El Salvador (2,381 m), con una imponente laguna de azufre en su cráter y vistas espectaculares.",
+    "file": "/3d_models/volcan.glb",
+    "category": "naturaleza",
+    "thumbnail": ""
+  },
+  {
+    "id": "iglesia",
+    "name": "Iglesia El Rosario",
+    "description": "Templo modernista en San Salvador con impresionantes vitrales abstractos y una arquitectura única en Centroamérica.",
+    "file": "/3d_models/iglesia.glb",
+    "category": "arquitectura",
+    "thumbnail": ""
+  },
+  {
+    "id": "rustico",
+    "name": "Jardín de Esculturas",
+    "description": "Museo al aire libre en el Parque Natural San Benito, con obras de artistas salvadoreños contemporáneos.",
+    "file": "/3d_models/rustico.glb",
+    "category": "arte",
+    "thumbnail": ""
+  },
+  {
+    "id": "surf",
+    "name": "Playa El Tunco",
+    "description": "Icono del surf salvadoreño, famosa por su roca con forma de cerdo y sus atardeceres inolvidables.",
+    "file": "/3d_models/surf.glb",
+    "category": "playa",
+    "thumbnail": ""
+  }
+]
