@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CULTURAXR — Invocación de Leyendas · Joya de Cerén</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet" href="culturaxr.css" />
+</head>
+<body>
+
+<!-- ═══ CAPAS DE AMBIENTE ═══ -->
+<div class="fog fog-1"></div>
+<div class="fog fog-2"></div>
+<canvas id="fireflies"></canvas>
+<div class="vignette"></div>
+<div id="flash"></div>
+
+<div class="contenido">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="cx-header">
+    <p class="header_eyebrow">Joya de Cerén · Patrimonio UNESCO · El Salvador</p>
+    <h1 class="header_titulo">CULTURA<span class="accent">XR</span></h1>
+    <p class="header_subtitulo">Una plataforma de realidad aumentada que transforma la forma en que turistas nacionales e internacionales descubren la riqueza cultural de El Salvador: experiencias inmersivas que conectan historia, patrimonio y tecnología en un solo recorrido.</p>
+
+    <nav class="cx-nav">
+      <button class="cx-nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu">
+        ☰ Menú
+      </button>
+      <ul class="cx-nav__lista" id="nav-menu">
+        <li><a class="cx-nav__link" href="culturaxr.html">Inicio</a></li>
+        <li><a class="cx-nav__link" href="#leyendas">Leyendas</a></li>
+        <li><a class="cx-nav__link" href="#info-sitio">Acerca de</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="sep"></div>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero reveal">
+    <h2 class="hero_titulo">Joya de Cerén</h2>
+    <p class="hero_subtitulo">Patrimonio de la Humanidad</p>
+    <p class="hero_texto">La "Pompeya de América": una aldea maya sepultada por ceniza volcánica hace más de 1,400 años, preservada casi intacta.</p>
+  </section>
+
+  <!-- ═══ GALERÍA ═══ -->
+  <section class="galeria-wrapper reveal">
+    <h3 class="seccion-titulo">Recorré el sitio</h3>
+    <div class="galeria">
+      <div class="galeria_item">
+        <img src="img/3.jpg" alt="Entrada al sitio arqueológico" class="galeria_imagen">
+        <p class="galeria_descripcion">Descubre un Patrimonio de la Humanidad. Vive una experiencia inmersiva en la Joya de Cerén, donde la realidad aumentada revela la historia, la cultura y la vida cotidiana de una antigua comunidad maya.</p>
+      </div>
+      <div class="galeria_item">
+        <img src="img/2.jfif" alt="Pieza encontrada" class="galeria_imagen">
+        <p class="galeria_descripcion">Conecta con el legado de nuestros antepasados. Explora piezas arqueológicas, reliquias y objetos históricos mediante una experiencia interactiva que hace cada visita más educativa e inolvidable.</p>
+      </div>
+      <div class="galeria_item">
+        <img src="img/1.jpg" alt="Monumentos enterrados encontrados con el tiempo" class="galeria_imagen">
+        <p class="galeria_descripcion">Transformamos la manera de descubrir el patrimonio cultural de El Salvador: reconstrucciones digitales, historia interactiva y recorridos inmersivos que conectan tecnología, cultura y turismo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ MAPA ═══ -->
+  <section class="mapa-wrapper reveal">
+    <h3 class="seccion-titulo">Explorá el sitio</h3>
+    <div id="mapa" class="mapa"></div>
+  </section>
+
+  <!-- ═══ LEYENDAS ═══ -->
+  <section class="leyendas-wrapper reveal" id="leyendas" aria-label="Personajes del folklore salvadoreño">
+    <h3 class="seccion-titulo">Invoca las leyendas</h3>
+    <p class="hint">Elige un personaje para comenzar</p>
+
+    <div class="grid">
+
+      <article class="card" data-id="cipitio" data-nombre="El Cipitío">
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="40" rx="42" ry="7" fill="rgba(200,168,75,.12)" stroke="rgba(200,168,75,.6)" stroke-width="1.2"/>
+            <path d="M32 40 Q50 28 68 40" stroke="rgba(200,168,75,.6)" stroke-width="1.4" fill="rgba(200,168,75,.09)"/>
+            <circle cx="50" cy="54" r="13" fill="rgba(200,168,75,.09)" stroke="rgba(200,168,75,.65)" stroke-width="1.4"/>
+            <circle cx="45" cy="52" r="2.2" fill="rgba(200,168,75,.95)"/>
+            <circle cx="55" cy="52" r="2.2" fill="rgba(200,168,75,.95)"/>
+            <path d="M43.5 58.5 Q50 63.5 56.5 58.5" stroke="rgba(200,168,75,.7)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            <path d="M41 67 Q50 64 59 67 L56 90 H44 Z" fill="rgba(200,168,75,.07)" stroke="rgba(200,168,75,.45)" stroke-width="1.2"/>
+            <path d="M44 90 L36 100 Q50 96 64 100 L56 90" fill="rgba(200,168,75,.14)" stroke="rgba(200,168,75,.45)" stroke-width="1.1"/>
+            <path d="M41 71 L26 78" stroke="rgba(200,168,75,.55)" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M59 71 L74 78" stroke="rgba(200,168,75,.55)" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="22" cy="80" r="3" fill="none" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <circle cx="78" cy="80" r="3" fill="none" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+          </svg>
+        </div>
+        <p class="tipo">Duende · Río</p>
+        <h3>El Cipitío</h3>
+        <p class="desc">Niño travieso de pies al revés. Aparece bajo los amates, con sombrero enorme, seduciendo viajeras con flores silvestres en los ríos del campo.</p>
+        <button class="btn-invoke" aria-label="Invocar a El Cipitío">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Invocar
+        </button>
+      </article>
+
+      <article class="card" data-id="siguanaba" data-nombre="La Siguanaba">
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 36 Q18 62 16 108" stroke="rgba(200,168,75,.38)" stroke-width="2.2" fill="none"/>
+            <path d="M38 33 Q24 68 22 112" stroke="rgba(200,168,75,.28)" stroke-width="1.5" fill="none"/>
+            <path d="M68 36 Q82 62 84 108" stroke="rgba(200,168,75,.38)" stroke-width="2.2" fill="none"/>
+            <path d="M62 33 Q76 68 78 112" stroke="rgba(200,168,75,.28)" stroke-width="1.5" fill="none"/>
+            <path d="M36 58 Q50 53 64 58 L60 92 Q50 97 40 92 Z" fill="rgba(200,168,75,.06)" stroke="rgba(200,168,75,.38)" stroke-width="1.2"/>
+            <circle cx="50" cy="44" r="15" fill="rgba(200,168,75,.07)" stroke="rgba(200,168,75,.58)" stroke-width="1.4"/>
+            <circle cx="50" cy="44" r="19" fill="none" stroke="rgba(200,168,75,.1)" stroke-width="5"/>
+            <ellipse cx="43" cy="42" rx="4.5" ry="5.5" fill="rgba(200,168,75,.92)"/>
+            <ellipse cx="57" cy="42" rx="4.5" ry="5.5" fill="rgba(200,168,75,.92)"/>
+            <circle cx="43" cy="43" r="2.5" fill="rgba(6,13,26,1)"/>
+            <circle cx="57" cy="43" r="2.5" fill="rgba(6,13,26,1)"/>
+            <path d="M36 68 Q20 56 10 62" stroke="rgba(200,168,75,.48)" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M64 68 Q80 56 90 62" stroke="rgba(200,168,75,.48)" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="10" y1="55" x2="14" y2="60" stroke="rgba(200,168,75,.35)" stroke-width="1" stroke-linecap="round"/>
+            <line x1="90" y1="55" x2="86" y2="60" stroke="rgba(200,168,75,.35)" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="tipo">Espíritu · Engaño</p>
+        <h3>La Siguanaba</h3>
+        <p class="desc">Mujer de rostro cambiante. Seduce hombres infieles en la oscuridad y los extravía hasta la locura. Solo pronunciar su nombre al revés la detiene.</p>
+        <button class="btn-invoke" aria-label="Invocar a La Siguanaba">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Invocar
+        </button>
+      </article>
+
+      <article class="card" data-id="cadejo" data-nombre="El Cadejo">
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="84" rx="26" ry="16" fill="rgba(200,168,75,.07)" stroke="rgba(200,168,75,.45)" stroke-width="1.3"/>
+            <circle cx="50" cy="52" r="21" fill="rgba(200,168,75,.07)" stroke="rgba(200,168,75,.58)" stroke-width="1.4"/>
+            <path d="M33 42 L27 22 L38 38" fill="rgba(200,168,75,.12)" stroke="rgba(200,168,75,.58)" stroke-width="1.4"/>
+            <path d="M67 42 L73 22 L62 38" fill="rgba(200,168,75,.12)" stroke="rgba(200,168,75,.58)" stroke-width="1.4"/>
+            <circle cx="41" cy="51" r="7" fill="rgba(200,168,75,.15)" stroke="rgba(200,168,75,.5)" stroke-width="1"/>
+            <circle cx="59" cy="51" r="7" fill="rgba(200,168,75,.15)" stroke="rgba(200,168,75,.5)" stroke-width="1"/>
+            <circle cx="41" cy="51" r="4.5" fill="rgba(200,168,75,1)"/>
+            <circle cx="59" cy="51" r="4.5" fill="rgba(200,168,75,1)"/>
+            <circle cx="39.5" cy="49" r="1.5" fill="rgba(255,240,200,.9)"/>
+            <circle cx="57.5" cy="49" r="1.5" fill="rgba(255,240,200,.9)"/>
+            <ellipse cx="50" cy="62" rx="8" ry="5" fill="rgba(200,168,75,.08)" stroke="rgba(200,168,75,.38)" stroke-width="1.1"/>
+            <line x1="36" y1="97" x2="33" y2="111" stroke="rgba(200,168,75,.5)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="44" y1="99" x2="42" y2="113" stroke="rgba(200,168,75,.5)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="56" y1="99" x2="58" y2="113" stroke="rgba(200,168,75,.5)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="64" y1="97" x2="67" y2="111" stroke="rgba(200,168,75,.5)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M24 82 Q16 88 20 96" stroke="rgba(200,168,75,.35)" stroke-width="1.3" stroke-dasharray="3 2.5" stroke-linecap="round"/>
+            <path d="M76 82 Q84 88 80 96" stroke="rgba(200,168,75,.35)" stroke-width="1.3" stroke-dasharray="3 2.5" stroke-linecap="round"/>
+            <circle cx="41" cy="51" r="9" fill="none" stroke="rgba(200,168,75,.16)" stroke-width="4"/>
+            <circle cx="59" cy="51" r="9" fill="none" stroke="rgba(200,168,75,.16)" stroke-width="4"/>
+          </svg>
+        </div>
+        <p class="tipo">Guardián · Noche</p>
+        <h3>El Cadejo</h3>
+        <p class="desc">Perro espectral de ojos de brasa. El blanco cuida al viajero honesto; el negro lo arrastra al abismo. Juntos mantienen el equilibrio de la noche.</p>
+        <button class="btn-invoke" aria-label="Invocar a El Cadejo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Invocar
+        </button>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ═══ INFO DEL SITIO ═══ -->
+  <section class="sitio reveal" id="info-sitio">
+    <article class="sitio_dato">
+      <h3 class="sitio_dato-titulo">¿Qué podremos encontrar acá?</h3>
+      <p class="sitio_dato-texto">Es el único sitio arqueológico de Latinoamérica declarado Patrimonio de la Humanidad por preservar la vida cotidiana maya, no solo templos.</p>
+    </article>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta reveal" id="cta-experiencia">
+    <p class="cta_texto">Activá la experiencia y descubrí sobre este lugar</p>
+    <button class="cx-boton cx-boton-primario" id="btn-iniciar-experiencia">
+      Iniciar experiencia
+    </button>
+  </section>
+
+</div>
+
+<!-- ═══ TOGGLE DE SONIDO ═══ -->
+<button class="sound-toggle" id="sound-toggle" aria-label="Activar o silenciar sonido" title="Sonido">
+  <svg id="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+  <svg id="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+</button>
+
+<!-- ═══ OVERLAY DE INVOCACIÓN ═══ -->
+<div id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+  <div class="overlay-bar">
+    <p id="overlay-title">—</p>
+    <button class="btn-back" onclick="cerrar()">← Volver</button>
+  </div>
+
+  <!--
+    ╔══════════════════════════════════════════════════════════╗
+    ║  PUNTO DE ENCHUFE — AQUÍ VA LA ESCENA THREE.JS           ║
+    ║  Ver contrato al final del <script>                      ║
+    ╚══════════════════════════════════════════════════════════╝
+  -->
+  <div id="escena-3d">
+    <div class="loading" id="loading">
+      <div class="ritual">
+        <div class="ring"></div>
+        <div class="ring2"></div>
+        <div class="core"></div>
+      </div>
+      <p>Invocando la leyenda…</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   MOTOR DE SONIDO — Web Audio API
+   Todo sintetizado en el navegador. Cero archivos.
+   ═══════════════════════════════════════════ */
+const Audio3 = (function() {
+  let ctx = null;
+  let master = null;
+  let ambientNodes = [];
+  let muted = false;
+
+  function init() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.6;
+    master.connect(ctx.destination);
+  }
+
+  function tone(freq, dur, type, vol, delay = 0, freqEnd = null) {
+    if (!ctx || muted) return;
+    const t0 = ctx.currentTime + delay;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g); g.connect(master);
+    osc.start(t0); osc.stop(t0 + dur + 0.05);
+  }
+
+  function noise(dur, vol, filterFreq, delay = 0) {
+    if (!ctx || muted) return null;
+    const t0 = ctx.currentTime + delay;
+    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = filterFreq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + dur * 0.3);
+    g.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(filter); filter.connect(g); g.connect(master);
+    src.start(t0);
+    return { src, g };
+  }
+
+  return {
+    init,
+    get muted() { return muted; },
+    toggleMute() {
+      muted = !muted;
+      if (muted) this.stopAmbient();
+      return muted;
+    },
+
+    hover() {
+      init();
+      tone(880, 0.09, 'sine', 0.06);
+    },
+
+    /* El Cipitío: campanitas juguetonas ascendentes */
+    cipitio() {
+      init();
+      tone(1046, 0.22, 'sine', 0.22, 0.00);
+      tone(1318, 0.22, 'sine', 0.20, 0.10);
+      tone(1568, 0.30, 'sine', 0.18, 0.20);
+      tone(2093, 0.45, 'triangle', 0.14, 0.32);
+      tone(2637, 0.35, 'sine', 0.08, 0.44);
+      noise(0.6, 0.03, 4000, 0.1);
+    },
+
+    /* La Siguanaba: tono etéreo descendente */
+    siguanaba() {
+      init();
+      tone(660, 1.4, 'sine', 0.16, 0, 440);
+      tone(662, 1.4, 'sine', 0.12, 0.05, 442);
+      tone(1320, 1.1, 'triangle', 0.05, 0.3, 990);
+      noise(1.6, 0.05, 900, 0);
+      tone(220, 1.8, 'sine', 0.08, 0.4, 180);
+    },
+
+    /* El Cadejo: retumbo grave, casi gruñido */
+    cadejo() {
+      init();
+      tone(55, 1.2, 'sawtooth', 0.20, 0, 40);
+      tone(82, 0.9, 'sawtooth', 0.12, 0.05, 62);
+      tone(110, 0.5, 'square', 0.05, 0.1, 90);
+      noise(1.4, 0.08, 300, 0);
+      tone(165, 0.15, 'triangle', 0.10, 0.7);
+      tone(165, 0.15, 'triangle', 0.08, 1.0);
+    },
+
+    startAmbient() {
+      init();
+      if (muted) return;
+      this.stopAmbient();
+      const t0 = ctx.currentTime;
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sine'; osc1.frequency.value = 110;
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine'; osc2.frequency.value = 165.2;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(0.045, t0 + 2.5);
+
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.12;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 0.018;
+      lfo.connect(lfoGain); lfoGain.connect(g.gain);
+
+      osc1.connect(g); osc2.connect(g); g.connect(master);
+      osc1.start(); osc2.start(); lfo.start();
+      ambientNodes = [osc1, osc2, lfo, g];
+    },
+
+    stopAmbient() {
+      if (!ambientNodes.length || !ctx) return;
+      const g = ambientNodes[3];
+      try {
+        g.gain.cancelScheduledValues(ctx.currentTime);
+        g.gain.setValueAtTime(g.gain.value, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.8);
+      } catch(e) {}
+      const nodes = ambientNodes;
+      setTimeout(() => nodes.slice(0, 3).forEach(n => { try { n.stop(); } catch(e) {} }), 900);
+      ambientNodes = [];
+    },
+
+    close() {
+      init();
+      tone(660, 0.12, 'sine', 0.12);
+      tone(440, 0.18, 'sine', 0.10, 0.08);
+    }
+  };
+})();
+
+/* ═══ LUCIÉRNAGAS ═══ */
+(function() {
+  const cv = document.getElementById('fireflies');
+  const cx = cv.getContext('2d');
+  function sz() { cv.width = innerWidth; cv.height = innerHeight; }
+  sz(); addEventListener('resize', sz);
+
+  const N = 60;
+  const p = Array.from({length: N}, () => ({
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight,
+    r: Math.random() * 1.8 + 0.4,
+    a: Math.random(),
+    da: (Math.random() > .5 ? 1 : -1) * (0.006 + Math.random() * 0.006),
+    vx: (Math.random() - .5) * 0.35,
+    vy: (Math.random() - .5) * 0.35 - 0.12,
+  }));
+
+  function frame() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    for (const f of p) {
+      f.x += f.vx; f.y += f.vy;
+      f.a += f.da;
+      if (f.a <= 0 || f.a >= 1) f.da *= -1;
+      if (f.x < 0) f.x = cv.width;
+      if (f.x > cv.width) f.x = 0;
+      if (f.y < 0) f.y = cv.height;
+      if (f.y > cv.height) f.y = 0;
+
+      cx.beginPath();
+      cx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      cx.fillStyle = `rgba(200,168,75,${f.a * .72})`;
+      cx.fill();
+      cx.beginPath();
+      cx.arc(f.x, f.y, f.r * 3.5, 0, Math.PI * 2);
+      cx.fillStyle = `rgba(200,168,75,${f.a * .07})`;
+      cx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ═══ NAV ═══ */
+const botonNav = document.getElementById('nav-toggle');
+const menuNav = document.getElementById('nav-menu');
+
+botonNav.addEventListener('click', () => {
+  menuNav.classList.toggle('abierto');
+  const expandido = menuNav.classList.contains('abierto');
+  botonNav.setAttribute('aria-expanded', expandido);
+});
+
+/* ═══ APARICIÓN AL HACER SCROLL ═══ */
+const observador = new IntersectionObserver((entradas) => {
+  entradas.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observador.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observador.observe(el));
+
+/* ═══ MAPA — MapLibre ═══ */
+const mapa = new maplibregl.Map({
+  container: 'mapa',
+  style: 'https://tiles.openfreemap.org/styles/liberty',
+  center: [-89.3606, 13.8236],
+  zoom: 15
+});
+
+const personajes = [
+  { nombre: 'El Cipitío', coords: [-89.3609, 13.8238], id: 'cipitio' },
+  { nombre: 'La Siguanaba', coords: [-89.3600, 13.8233], id: 'siguanaba' },
+  { nombre: 'El Cadejo', coords: [-89.3612, 13.8230], id: 'cadejo' }
+];
+
+personajes.forEach((personaje) => {
+  const elementoMarcador = document.createElement('button');
+  elementoMarcador.className = 'marcador-personaje';
+  elementoMarcador.textContent = '📍';
+  elementoMarcador.setAttribute('data-personaje', personaje.id);
+  elementoMarcador.setAttribute('aria-label', personaje.nombre);
+
+  /* El marcador también invoca al personaje */
+  elementoMarcador.addEventListener('click', () => {
+    invocar(personaje.id, personaje.nombre);
+  });
+
+  new maplibregl.Marker({ element: elementoMarcador })
+    .setLngLat(personaje.coords)
+    .setPopup(new maplibregl.Popup().setText(personaje.nombre))
+    .addTo(mapa);
+});
+
+/* ═══ INTERACCIÓN — INVOCACIÓN ═══ */
+const overlay = document.getElementById('overlay');
+const loading = document.getElementById('loading');
+const flash   = document.getElementById('flash');
+
+let lastHover = 0;
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    const now = Date.now();
+    if (now - lastHover > 400) { Audio3.hover(); lastHover = now; }
+  });
+  card.addEventListener('click', () => {
+    invocar(card.dataset.id, card.dataset.nombre);
+  });
+});
+
+function invocar(id, nombre) {
+  /* 1. Firma sonora del personaje */
+  if (Audio3[id]) Audio3[id]();
+
+  /* 2. Flash dramático */
+  flash.classList.add('on');
+
+  setTimeout(() => {
+    /* 3. Abrir el overlay */
+    document.getElementById('overlay-title').textContent = nombre;
+    loading.style.display = 'flex';
+    overlay.classList.add('on');
+    document.body.style.overflow = 'hidden';
+    flash.classList.remove('on');
+
+    /* 4. Ambiente sonoro dentro de la escena */
+    Audio3.startAmbient();
+
+    /* 5. Avisar a Three.js qué personaje cargar */
+    document.dispatchEvent(new CustomEvent('invocar-personaje', {
+      detail: { id, nombre }
+    }));
+  }, 550);
+}
+
+function cerrar() {
+  Audio3.close();
+  Audio3.stopAmbient();
+  overlay.classList.remove('on');
+  document.body.style.overflow = '';
+  document.dispatchEvent(new CustomEvent('cerrar-invocacion'));
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('on')) cerrar(); });
+
+/* CTA: lleva a las leyendas */
+document.getElementById('btn-iniciar-experiencia').addEventListener('click', () => {
+  document.getElementById('leyendas').scrollIntoView({ behavior: 'smooth' });
+});
+
+/* Toggle de sonido */
+const btnSound = document.getElementById('sound-toggle');
+btnSound.addEventListener('click', () => {
+  Audio3.init();
+  const m = Audio3.toggleMute();
+  btnSound.classList.toggle('muted', m);
+  document.getElementById('icon-sound-on').style.display  = m ? 'none' : 'block';
+  document.getElementById('icon-sound-off').style.display = m ? 'block' : 'none';
+});
+
+/* ═══════════════════════════════════════════
+   CONTRATO CON THREE.JS (para el equipo)
+   ═══════════════════════════════════════════
+   1. Escuchar:  document.addEventListener('invocar-personaje', e => {
+                   e.detail.id      → 'cipitio' | 'siguanaba' | 'cadejo'
+                   e.detail.nombre  → nombre legible
+                   → cargar el .glb correspondiente
+                 });
+   2. Montar:    #escena-3d es el contenedor. Append del renderer.domElement,
+                 renderer.setClearColor(0x000000, 0) para fondo transparente,
+                 renderer.setSize(contenedor.offsetWidth, contenedor.offsetHeight).
+   3. Avisar:    cuando el modelo cargue, llamar window.modeloCargado()
+                 para ocultar el spinner ritual.
+   4. Cerrar:    escuchar 'cerrar-invocacion' para detener el render loop.
+   ═══════════════════════════════════════════ */
+window.modeloCargado = function() {
+  loading.style.display = 'none';
+};
+</script>
+
+</body>
+</html>

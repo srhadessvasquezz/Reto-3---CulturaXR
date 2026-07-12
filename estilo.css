@@ -1,0 +1,328 @@
+/* ============================================
+   1. VARIABLES — el catálogo de piezas
+   ============================================ */
+:root {
+  --color-anil-900: #0B2545;
+  --color-anil-700: #1B3A5C;
+  --color-anil-500: #2E5C8A;
+  --color-arena-100: #F5F0E6;
+  --color-arena-50:  #FBF9F4;
+  --color-texto: #1A1A1A;
+  --color-blanco: #FFFFFF;
+
+  --font-titulos: 'Poppins', sans-serif;
+  --font-cuerpo: 'Inter', sans-serif;
+
+  --texto-xl: 3rem;
+  --texto-lg: 2rem;
+  --texto-md: 1.5rem;
+  --texto-sm: 1rem;
+  --texto-xs: 0.875rem;
+
+  --espacio-xs: 0.5rem;
+  --espacio-sm: 1rem;
+  --espacio-md: 1.5rem;
+  --espacio-lg: 2.5rem;
+  --espacio-xl: 4rem;
+
+  --radio-borde: 8px;
+}
+
+/* ============================================
+   2. RESET BÁSICO
+   ============================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-cuerpo);
+  color: var(--color-texto);
+  background-color: var(--color-arena-50);
+  line-height: 1.6;
+}
+
+/* ============================================
+   2.5 ANIMACIONES — las recetas (NUEVO)
+   ============================================ */
+@keyframes aparecer-desde-abajo {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulso-suave {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+/* ============================================
+   3. HEADER
+   ============================================ */
+.cx-header {
+  background-color: var(--color-anil-900);
+  color: var(--color-blanco);
+  padding: var(--espacio-md) var(--espacio-lg);
+  text-align: center;
+  animation: aparecer-desde-abajo 0.6s ease-out; /* NUEVO */
+}
+
+.header_titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-xl);
+  font-weight: 700;
+}
+
+.header_subtitulo {
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-sm);
+  max-width: 640px;
+  margin: var(--espacio-sm) auto 0;
+  color: var(--color-arena-100);
+}
+
+/* ============================================
+   4. HERO
+   ============================================ */
+.hero {
+  padding: var(--espacio-xl) var(--espacio-lg);
+  text-align: center;
+  background-color: var(--color-arena-100);
+  animation: aparecer-desde-abajo 0.6s ease-out 0.2s both; /* NUEVO */
+}
+
+.hero_titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-lg);
+  color: var(--color-anil-900);
+  font-weight: 600;
+}
+
+.hero_subtitulo {
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-anil-500);
+  margin-top: var(--espacio-xs);
+}
+
+.hero_texto {
+  font-size: var(--texto-sm);
+  max-width: 600px;
+  margin: var(--espacio-sm) auto 0;
+}
+
+/* ============================================
+   5. SITIO (info del lugar)
+   ============================================ */
+.sitio {
+  padding: var(--espacio-lg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sitio_dato {
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+  animation: aparecer-desde-abajo 0.6s ease-out 0.4s both; /* NUEVO */
+}
+
+.sitio_dato-titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-md);
+  color: var(--color-anil-700);
+  margin-bottom: var(--espacio-xs);
+}
+
+.sitio_dato-texto {
+  font-size: var(--texto-sm);
+}
+
+/* ============================================
+   6. CTA + BOTÓN
+   ============================================ */
+.cta {
+  text-align: center;
+  padding: var(--espacio-lg);
+  animation: aparecer-desde-abajo 0.6s ease-out 0.6s both; /* NUEVO */
+}
+
+.cta_texto {
+  font-size: var(--texto-sm);
+  margin-bottom: var(--espacio-sm);
+}
+
+.cx-boton {
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-sm) var(--espacio-lg);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cx-boton-primario {
+  background-color: var(--color-anil-700);
+  color: var(--color-blanco);
+}
+
+.cx-boton-primario:hover {
+  background-color: var(--color-anil-900);
+  animation: pulso-suave 1.2s ease-in-out infinite; /* NUEVO */
+}
+
+/* ============================================
+   7. ACCESIBILIDAD — respeta config del usuario (NUEVO)
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+   NAV
+   ============================================ */
+.cx-nav {
+  margin-top: var(--espacio-sm);
+}
+
+.cx-nav__toggle {
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-sm);
+  background-color: var(--color-anil-700);
+  color: var(--color-blanco);
+  border: none;
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-xs) var(--espacio-sm);
+  cursor: pointer;
+}
+
+.cx-nav__lista {
+  list-style: none;
+  display: none;
+  flex-direction: column;
+  gap: var(--espacio-xs);
+  margin-top: var(--espacio-sm);
+}
+
+.cx-nav__lista.abierto {
+  display: flex;
+}
+
+.cx-nav__link {
+  display: block;
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  text-decoration: none;
+  background-color: var(--color-arena-100);
+  color: var(--color-anil-900);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-sm);
+  transition: background-color 0.2s ease;
+}
+
+.cx-nav__link:hover {
+  background-color: var(--color-arena-50);
+}
+
+/* ============================================
+   MAPA
+   ============================================ */
+
+   .mapa-wrapper {
+  padding: var(--espacio-lg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.mapa-titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-md);
+  color: var(--color-anil-700);
+  margin-bottom: var(--espacio-sm);
+  text-align: center;
+}
+
+.mapa {
+  height: 400px;
+  border-radius: var(--radio-borde);
+  border: 2px solid var(--color-anil-500);
+}
+.marcador-personaje {
+  background-color: var(--color-anil-700);
+  border: 3px solid var(--color-blanco);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: var(--texto-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.marcador-personaje:hover {
+  transform: scale(1.15);
+}
+
+/* ============================================
+   GALERÍA HORIZONTAL
+   ============================================ */
+
+   .galeria-wrapper {
+    padding: var(--espacio-lg);
+   }
+   .galeria-titulo {
+    font-family: var(--font-titulos);
+    font-size: var(--texto-md);
+    color: var(--color-anil-700);
+    margin-bottom: var(--espacio-sm);
+    text-align: center;
+   }
+   .galeria {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    gap: var(--espacio-md);
+    padding-bottom: var(--espacio-sm);
+   }
+   .galeria__item {
+  flex: 0 0 auto;
+  width: 280px;
+  scroll-snap-align: center;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde);
+  overflow: hidden;
+}
+
+.galeria__imagen {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.galeria__descripcion {
+  font-size: var(--texto-xs);
+  padding: var(--espacio-sm);
+  color: var(--color-texto);
+}

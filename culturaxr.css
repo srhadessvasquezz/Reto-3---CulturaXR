@@ -1,0 +1,735 @@
+/* ═══════════════════════════════════════════════
+   CULTURAXR — Diseño combinado
+   Estructura del website + estética "Invocación de Leyendas"
+   ═══════════════════════════════════════════════ */
+
+/* ============================================
+   1. VARIABLES
+   ============================================ */
+:root {
+  /* Paleta nocturna (del diseño de leyendas) */
+  --añil-noche:   #060d1a;
+  --añil-card:    rgba(13, 31, 56, 0.65);
+  --arena:        #c8a84b;
+  --arena-glow:   rgba(200, 168, 75, 0.18);
+  --arena-borde:  rgba(200, 168, 75, 0.32);
+  --texto:        #f0e8d0;
+  --texto-suave:  #8b9ab0;
+
+  /* Tipografía y espaciado (del website) */
+  --font-titulos: 'Poppins', sans-serif;
+  --font-cuerpo:  'Inter', sans-serif;
+
+  --texto-xl: 3rem;
+  --texto-lg: 2rem;
+  --texto-md: 1.5rem;
+  --texto-sm: 1rem;
+  --texto-xs: 0.875rem;
+
+  --espacio-xs: 0.5rem;
+  --espacio-sm: 1rem;
+  --espacio-md: 1.5rem;
+  --espacio-lg: 2.5rem;
+  --espacio-xl: 4rem;
+
+  --radio-borde: 18px;
+}
+
+/* ============================================
+   2. RESET
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-cuerpo);
+  color: var(--texto);
+  background: var(--añil-noche);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   3. CAPAS DE AMBIENTE (luciérnagas, niebla, viñeta)
+   ============================================ */
+#fireflies { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+
+.fog {
+  position: fixed;
+  width: 140vw; height: 60vh;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, rgba(30,60,110,0.16) 0%, transparent 65%);
+  filter: blur(40px);
+}
+.fog-1 { top: -10%; left: -30%; animation: fogDrift1 38s ease-in-out infinite alternate; }
+.fog-2 { bottom: -20%; right: -35%; animation: fogDrift2 46s ease-in-out infinite alternate; background: radial-gradient(ellipse at center, rgba(200,168,75,0.05) 0%, transparent 62%); }
+
+@keyframes fogDrift1 { from { transform: translateX(0) translateY(0); } to { transform: translateX(14vw) translateY(6vh); } }
+@keyframes fogDrift2 { from { transform: translateX(0); } to { transform: translateX(-16vw); } }
+
+.vignette {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 3;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(2,5,12,0.55) 100%);
+}
+
+/* Todo el contenido va sobre las capas de ambiente */
+.contenido { position: relative; z-index: 4; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   4. HEADER
+   ============================================ */
+.cx-header {
+  text-align: center;
+  padding: var(--espacio-xl) var(--espacio-lg) var(--espacio-lg);
+}
+
+.header_eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.45em;
+  color: var(--arena);
+  text-transform: uppercase;
+  margin-bottom: 0.85rem;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.15s forwards;
+}
+
+.header_titulo {
+  font-family: var(--font-titulos);
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.35s forwards;
+}
+
+.header_titulo .accent {
+  color: var(--arena);
+  display: inline-block;
+  animation: titleGlow 4s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% { text-shadow: 0 0 18px rgba(200,168,75,0.25); }
+  50%      { text-shadow: 0 0 38px rgba(200,168,75,0.6); }
+}
+
+.header_subtitulo {
+  font-size: var(--texto-sm);
+  font-weight: 300;
+  max-width: 640px;
+  margin: var(--espacio-sm) auto 0;
+  color: var(--texto-suave);
+  opacity: 0;
+  animation: fadeUp 1s ease 0.55s forwards;
+}
+
+/* ============================================
+   5. NAV
+   ============================================ */
+.cx-nav {
+  margin-top: var(--espacio-md);
+  opacity: 0;
+  animation: fadeUp 1s ease 0.7s forwards;
+}
+
+.cx-nav__toggle {
+  font-family: var(--font-titulos);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--arena);
+  border: 1px solid var(--arena);
+  border-radius: 100px;
+  padding: 0.55rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+}
+.cx-nav__toggle:hover {
+  background: var(--arena);
+  color: var(--añil-noche);
+  box-shadow: 0 0 30px rgba(200,168,75,0.45);
+}
+
+.cx-nav__lista {
+  list-style: none;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-xs);
+  margin-top: var(--espacio-sm);
+}
+.cx-nav__lista.abierto { display: flex; }
+
+.cx-nav__link {
+  display: block;
+  min-width: 180px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  background: var(--añil-card);
+  color: var(--texto);
+  border: 1px solid var(--arena-borde);
+  border-radius: 100px;
+  padding: 0.6rem var(--espacio-sm);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.25s, color 0.25s, box-shadow 0.25s;
+}
+.cx-nav__link:hover {
+  border-color: var(--arena);
+  color: var(--arena);
+  box-shadow: 0 0 18px rgba(200,168,75,0.25);
+}
+
+/* ============================================
+   6. SEPARADOR RITUAL
+   ============================================ */
+.sep {
+  width: 140px; height: 1px;
+  margin: 0 auto var(--espacio-lg);
+  background: linear-gradient(90deg, transparent, var(--arena), transparent);
+  position: relative;
+}
+.sep::after {
+  content: '◆';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8px;
+  color: var(--arena);
+  background: var(--añil-noche);
+  padding: 0 8px;
+}
+
+/* Títulos de sección compartidos */
+.seccion-titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-md);
+  font-weight: 600;
+  color: var(--arena);
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-bottom: var(--espacio-md);
+}
+
+/* ============================================
+   7. HERO — Joya de Cerén
+   ============================================ */
+.hero {
+  padding: var(--espacio-xl) var(--espacio-lg);
+  text-align: center;
+}
+
+.hero_titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-lg);
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.hero_subtitulo {
+  font-size: var(--texto-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--arena);
+  margin-top: var(--espacio-xs);
+}
+
+.hero_texto {
+  font-size: var(--texto-sm);
+  font-weight: 300;
+  color: var(--texto-suave);
+  max-width: 600px;
+  margin: var(--espacio-sm) auto 0;
+}
+
+/* ============================================
+   8. GALERÍA HORIZONTAL
+   ============================================ */
+.galeria-wrapper { padding: var(--espacio-lg); }
+
+.galeria {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: var(--espacio-md);
+  padding: var(--espacio-xs) var(--espacio-xs) var(--espacio-sm);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.galeria::-webkit-scrollbar { height: 6px; }
+.galeria::-webkit-scrollbar-thumb { background: var(--arena-borde); border-radius: 3px; }
+.galeria::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+
+.galeria_item {
+  flex: 0 0 auto;
+  width: 300px;
+  scroll-snap-align: center;
+  background: var(--añil-card);
+  border: 1px solid var(--arena-borde);
+  border-radius: var(--radio-borde);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: transform 0.4s cubic-bezier(.2,.9,.3,1.2), border-color 0.4s, box-shadow 0.4s;
+}
+.galeria_item:hover {
+  transform: translateY(-6px);
+  border-color: rgba(200,168,75,0.7);
+  box-shadow: 0 20px 50px rgba(200,168,75,0.1);
+}
+
+.galeria_imagen {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.85) brightness(0.92);
+  transition: filter 0.4s;
+}
+.galeria_item:hover .galeria_imagen { filter: saturate(1) brightness(1); }
+
+.galeria_descripcion {
+  font-size: var(--texto-xs);
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--texto-suave);
+  padding: var(--espacio-sm);
+}
+
+/* ============================================
+   9. MAPA
+   ============================================ */
+.mapa-wrapper {
+  padding: var(--espacio-lg);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mapa {
+  height: 420px;
+  border-radius: var(--radio-borde);
+  border: 1px solid var(--arena-borde);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(200,168,75,0.06);
+}
+
+.marcador-personaje {
+  background: var(--añil-noche);
+  border: 2px solid var(--arena);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  font-size: var(--texto-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px rgba(200,168,75,0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.marcador-personaje:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 26px rgba(200,168,75,0.8);
+}
+
+/* ============================================
+   10. TARJETAS DE LEYENDAS
+   ============================================ */
+.leyendas-wrapper {
+  padding: var(--espacio-lg) var(--espacio-md) var(--espacio-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: var(--espacio-lg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--espacio-md);
+  max-width: 960px;
+  width: 100%;
+}
+
+.card {
+  background: var(--añil-card);
+  border: 1px solid var(--arena-borde);
+  border-radius: 20px;
+  padding: 2.25rem 1.75rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.45s cubic-bezier(.2,.9,.3,1.2), box-shadow 0.45s ease, border-color 0.45s ease;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.card::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at 50% 0%, var(--arena-glow) 0%, transparent 68%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.015);
+  border-color: rgba(200,168,75,0.7);
+  box-shadow: 0 28px 70px rgba(200,168,75,0.12), 0 0 0 1px rgba(200,168,75,0.2);
+}
+.card:hover::after { opacity: 1; }
+
+.icon-wrap {
+  width: 96px; height: 116px;
+  margin-bottom: 1.6rem;
+  position: relative;
+  z-index: 1;
+  animation: floaty 5s ease-in-out infinite;
+}
+.card:nth-child(1) .icon-wrap { animation-delay: 0s; }
+.card:nth-child(2) .icon-wrap { animation-delay: 1.6s; }
+.card:nth-child(3) .icon-wrap { animation-delay: 3.2s; }
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+.icon-wrap svg {
+  width: 100%; height: 100%;
+  transition: filter 0.4s ease, transform 0.4s ease;
+  filter: drop-shadow(0 0 10px rgba(200,168,75,0.22));
+}
+.card:hover .icon-wrap svg {
+  filter: drop-shadow(0 0 26px rgba(200,168,75,0.6));
+  transform: scale(1.06);
+}
+
+.tipo {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--arena);
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+  position: relative; z-index: 1;
+  opacity: 0.85;
+}
+
+.card h3 {
+  font-family: var(--font-titulos);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  position: relative; z-index: 1;
+}
+
+.desc {
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+  line-height: 1.65;
+  margin-bottom: 1.6rem;
+  flex-grow: 1;
+  position: relative; z-index: 1;
+}
+
+.btn-invoke {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.6rem;
+  background: transparent;
+  border: 1px solid var(--arena);
+  border-radius: 100px;
+  color: var(--arena);
+  font-family: var(--font-titulos);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, box-shadow 0.25s, transform 0.15s;
+  position: relative; z-index: 1;
+}
+.btn-invoke:hover { background: var(--arena); color: var(--añil-noche); box-shadow: 0 0 30px rgba(200,168,75,0.45); }
+.btn-invoke:active { transform: scale(0.96); }
+.btn-invoke svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* ============================================
+   11. INFO DEL SITIO
+   ============================================ */
+.sitio {
+  padding: var(--espacio-lg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sitio_dato {
+  background: var(--añil-card);
+  border: 1px solid var(--arena-borde);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.sitio_dato-titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-md);
+  color: var(--arena);
+  margin-bottom: var(--espacio-xs);
+}
+
+.sitio_dato-texto {
+  font-size: var(--texto-sm);
+  font-weight: 300;
+  color: var(--texto-suave);
+}
+
+/* ============================================
+   12. CTA
+   ============================================ */
+.cta {
+  text-align: center;
+  padding: var(--espacio-lg) var(--espacio-lg) var(--espacio-xl);
+}
+
+.cta_texto {
+  font-size: var(--texto-sm);
+  color: var(--texto-suave);
+  margin-bottom: var(--espacio-sm);
+}
+
+.cx-boton {
+  font-family: var(--font-titulos);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  padding: var(--espacio-sm) var(--espacio-lg);
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, box-shadow 0.25s, transform 0.15s;
+}
+
+.cx-boton-primario {
+  background: var(--arena);
+  border: 1px solid var(--arena);
+  color: var(--añil-noche);
+  box-shadow: 0 0 24px rgba(200,168,75,0.3);
+}
+.cx-boton-primario:hover {
+  box-shadow: 0 0 46px rgba(200,168,75,0.6);
+  transform: translateY(-2px);
+}
+.cx-boton-primario:active { transform: scale(0.97); }
+
+/* ============================================
+   13. TOGGLE SONIDO
+   ============================================ */
+.sound-toggle {
+  position: fixed;
+  bottom: 1.4rem; right: 1.4rem;
+  z-index: 300;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--arena-borde);
+  background: rgba(6,13,26,0.85);
+  color: var(--arena);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  backdrop-filter: blur(6px);
+}
+.sound-toggle:hover { border-color: var(--arena); box-shadow: 0 0 18px rgba(200,168,75,0.3); }
+.sound-toggle svg { width: 18px; height: 18px; }
+.sound-toggle.muted { color: var(--texto-suave); }
+
+/* ============================================
+   14. FLASH DE INVOCACIÓN + OVERLAY
+   ============================================ */
+#flash {
+  position: fixed; inset: 0;
+  z-index: 250;
+  background: radial-gradient(circle at center, rgba(200,168,75,0.55), rgba(6,13,26,0.9) 70%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+#flash.on { opacity: 1; }
+
+#overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(4, 9, 22, 0.97);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1.5rem 2rem;
+}
+#overlay.on { display: flex; animation: overlayIn 0.6s ease; }
+
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+.overlay-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--arena-borde);
+}
+
+#overlay-title {
+  font-family: var(--font-titulos);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--arena);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.btn-back {
+  background: transparent;
+  border: 1px solid var(--arena-borde);
+  color: var(--texto-suave);
+  padding: 0.38rem 1.1rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-family: var(--font-cuerpo);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-back:hover { border-color: var(--arena); color: var(--arena); }
+
+#escena-3d {
+  width: 100%;
+  max-width: 860px;
+  height: 480px;
+  border: 1px solid var(--arena-borde);
+  border-radius: var(--radio-borde);
+  position: relative;
+  overflow: hidden;
+  background: rgba(6, 13, 26, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sceneIn 0.8s cubic-bezier(.2,.9,.3,1.1) 0.2s backwards;
+}
+
+@keyframes sceneIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  position: relative; z-index: 2;
+}
+
+/* Círculo ritual de carga */
+.ritual { width: 76px; height: 76px; position: relative; }
+.ritual .ring {
+  position: absolute; inset: 0;
+  border: 1.5px solid var(--arena-borde);
+  border-top-color: var(--arena);
+  border-radius: 50%;
+  animation: spin 1.4s linear infinite;
+}
+.ritual .ring2 {
+  position: absolute; inset: 10px;
+  border: 1px solid rgba(200,168,75,0.15);
+  border-bottom-color: rgba(200,168,75,0.7);
+  border-radius: 50%;
+  animation: spin 2.2s linear infinite reverse;
+}
+.ritual .core {
+  position: absolute; inset: 28px;
+  border-radius: 50%;
+  background: var(--arena);
+  animation: corePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes corePulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); box-shadow: 0 0 8px rgba(200,168,75,0.3); }
+  50%      { opacity: 1;    transform: scale(1.1); box-shadow: 0 0 26px rgba(200,168,75,0.8); }
+}
+
+.loading p {
+  font-family: var(--font-titulos);
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+  letter-spacing: 0.1em;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+/* ============================================
+   15. APARICIÓN AL HACER SCROLL
+   ============================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.2,.9,.3,1.1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   16. RESPONSIVE + ACCESIBILIDAD
+   ============================================ */
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; max-width: 380px; }
+  .mapa { height: 320px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
