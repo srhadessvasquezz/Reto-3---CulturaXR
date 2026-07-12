@@ -1,5 +1,41 @@
 # Registro de Cambios
 
+## [0.5.0] — 2026-07-12
+
+### Agregado
+- **Foto por gesto** — sostener 4 dedos ~2.25s frente a la cámara dispara
+  `PhotoCaptureFlow`: cuenta regresiva (3→2→1), flash blanco, composición
+  (video + canvas 3D + marca de agua "CULTURAXR") y descarga del PNG.
+- **Botón de foto** — alternativa táctil para el mismo flujo de captura.
+- **ActionMenu** — menú flotante con "Reiniciar posición" y "Volver al menú
+  principal", invocable por gesto de 3 dedos (flanco de subida) o por botón.
+- **Marco azteca inmersivo** — 4 bandas decorativas (`immersive-frame`)
+  superpuestas al visor durante la experiencia.
+- **Overlay de sitio** — nombre del modelo y ubicación geográfica fija en la
+  esquina superior del visor (`site-overlay`), leída de `MODEL_INFO`.
+- **`captureFrame()`** — utilidad que compone video espejado + canvas 3D +
+  marca de agua con tipografía Poppins, retorna data URL PNG.
+- **`downloadPng()`** — descarga un data URL como archivo `.png` vía Blob +
+  object URL (evita límite de Chrome en data URLs grandes).
+- **`TAKE_PHOTO`** — nueva variante en `GestureCommand` y `GestureMonitor`.
+- **`onCanvasReady`** prop en `ModelViewer` — expone el `<canvas>` del
+  renderer de Three.js para captura externa.
+- **`preserveDrawingBuffer: true`** en el `Canvas` de R3F — necesario para
+  que `toDataURL()` funcione tras cada frame.
+
+### Cambiado
+- **`CameraFeed`** — ahora acepta `videoRef` opcional (callback ref
+  combinada con la ref interna) para que `PhotoCaptureFlow` pueda acceder
+  al `<video>` y componer la captura.
+- **`ImmersiveExperience`** — polling de gestos cada 100ms para detectar
+  flanco de `TAKE_PHOTO` (con hold de 2.25s) y `PREVIOUS_MODEL` (toggle
+  de menú). integra `PhotoCaptureFlow`, `ActionMenu`, marco y overlay.
+- **`ModelViewer`** — clona la escena de `useGLTF` por montaje para que
+  el reinicio de posición funcione correctamente (sin posición residual
+  del cache de Three.js).
+- **`global.css`** — estilos para `capture-countdown`, `capture-flash`,
+  `capture-preview`, `immersive-frame`, `site-overlay`, `action-menu`.
+
 ## [0.4.1] — 2026-07-12
 
 ### Eliminado
