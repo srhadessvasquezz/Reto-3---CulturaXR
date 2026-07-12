@@ -11,25 +11,19 @@ export function CameraFeed({ stream, mirrored = true }: CameraFeedProps) {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
     video.srcObject = stream;
-
-    return () => {
-      video.srcObject = null;
-    };
+    return () => { video.srcObject = null; };
   }, [stream]);
 
   if (!stream) return null;
 
   return (
-    <div className="camera-feed">
-      <video
-        ref={videoRef}
-        className={mirrored ? 'camera-feed__video camera-feed__video--mirrored' : 'camera-feed__video'}
-        autoPlay
-        muted
-        playsInline
-      />
-    </div>
+    <video
+      ref={videoRef}
+      className={mirrored ? 'camera-feed camera-feed--mirrored' : 'camera-feed'}
+      autoPlay
+      muted
+      playsInline
+    />
   );
 }

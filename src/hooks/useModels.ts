@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react';
+import { getModels, getModelDetail } from '../data/models';
+import type { Model3D, Model3DDetail } from '../data/models';
 
-export interface Model3D {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  thumbnail: string | null;
-}
-
-export interface Model3DDetail extends Model3D {
-  file: string;
-}
+export type { Model3D, Model3DDetail };
 
 export function useModels() {
   const [models, setModels] = useState<Model3D[]>([]);
@@ -18,17 +10,19 @@ export function useModels() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/models')
-      .then(res => {
-        if (!res.ok) throw new Error('Error al cargar modelos');
-        return res.json();
-      })
-      .then(data => {
-        setModels(data);
-        setError(null);
-      })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
+    setLoading(true);
+    setError(null);
+    const timer = setTimeout(() => {
+      try {
+        setModels(getModels());
+      } catch {
+        setError('Error al cargar modelos');
+      } finally {
+        setLoading(false);
+      }
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return { models, loading, error };
@@ -46,17 +40,23 @@ export function useModelDetail(id: string | null) {
     }
 
     setLoading(true);
-    fetch(`/api/models/${id}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Modelo no encontrado');
-        return res.json();
-      })
-      .then(data => {
-        setModel(data);
-        setError(null);
-      })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
+    setError(null);
+    const timer = setTimeout(() => {
+      try {
+        const detail = getModelDetail(id);
+        if (detail) {
+          setModel(detail);
+        } else {
+          setError('Modelo no encontrado');
+        }
+      } catch {
+        setError('Error al cargar el modelo');
+      } finally {
+        setLoading(false);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [id]);
 
   return { model, loading, error };

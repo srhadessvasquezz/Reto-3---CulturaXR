@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useModels, useModelDetail } from './hooks/useModels';
 import { useCamera } from './hooks/useCamera';
 import { ModelList } from './components/ModelList';
 import { ModelViewer } from './components/ModelViewer';
 import { CameraSelector } from './components/CameraSelector';
 import { CameraFeed } from './components/CameraFeed';
+import { HandOverlay } from './components/HandOverlay';
+import type { GestureData } from './types';
 
 function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { models, loading, error } = useModels();
   const { model: selectedModel } = useModelDetail(selectedId);
   const camera = useCamera();
+  const gestureRef = useRef<GestureData | null>(null);
 
   return (
     <div className="app">
@@ -36,18 +39,20 @@ function App() {
         </aside>
 
         <section className="app-viewer">
-          <ModelViewer model={selectedModel} />
-          <div className="camera-overlay">
-            <CameraFeed stream={camera.stream} />
-            {camera.loading && (
-              <p className="camera-overlay__status">Activando cámara…</p>
-            )}
-            {camera.error && (
-              <p className="camera-overlay__status camera-overlay__status--error">
-                {camera.error}
-              </p>
-            )}
-          </div>
+          <CameraFeed stream={camera.stream} />
+          <ModelViewer model={selectedModel} gestureRef={gestureRef} />
+          <HandOverlay
+            stream={camera.stream}
+            onGesture={(data) => { gestureRef.current = data; }}
+          />
+          {camera.loading && (
+            <p className="viewer-status">Activando cámara…</p>
+          )}
+          {camera.error && (
+            <p className="viewer-status viewer-status--error">
+              {camera.error}
+            </p>
+          )}
         </section>
       </main>
     </div>
