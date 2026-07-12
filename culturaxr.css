@@ -372,9 +372,9 @@ body {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--espacio-md);
-  max-width: 960px;
+  max-width: 1080px;
   width: 100%;
 }
 
@@ -720,6 +720,11 @@ body {
 /* ============================================
    16. RESPONSIVE + ACCESIBILIDAD
    ============================================ */
+/* Tablet: 4 invocaciones en 2×2 (evita fila huérfana) */
+@media (max-width: 1000px) {
+  .grid { grid-template-columns: repeat(2, 1fr); max-width: 620px; }
+}
+
 @media (max-width: 720px) {
   .grid { grid-template-columns: 1fr; max-width: 380px; }
   .mapa { height: 320px; }
@@ -733,3 +738,72 @@ body {
   }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ============================================
+   17. INVOCACIONES — estados de tarjeta
+   (pirámide activa vs. leyendas por venir)
+   ============================================ */
+
+/* Badge de estado, esquina superior */
+.badge {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 2;
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.62rem;
+  border-radius: 100px;
+  border: 1px solid var(--arena-borde);
+  color: var(--texto-suave);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Tarjeta activa (con modelo real) */
+.card--activa { border-color: rgba(200, 168, 75, 0.45); }
+.card--activa .badge {
+  color: var(--arena);
+  border-color: rgba(200, 168, 75, 0.5);
+  background: rgba(200, 168, 75, 0.14);
+}
+
+/* Tarjeta bloqueada (sin modelo aún): apagada y sin hover activo */
+.card.locked { cursor: not-allowed; }
+.card.locked:hover {
+  transform: none;
+  border-color: var(--arena-borde);
+  box-shadow: none;
+}
+.card.locked:hover::after { opacity: 0; }
+.card.locked .icon-wrap svg { opacity: 0.5; }
+.card.locked:hover .icon-wrap svg { transform: none; filter: drop-shadow(0 0 10px rgba(200, 168, 75, 0.15)); }
+.card.locked .tipo,
+.card.locked h3,
+.card.locked .desc { opacity: 0.55; }
+
+/* Botón deshabilitado */
+.btn-invoke.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  border-color: var(--arena-borde);
+  color: var(--texto-suave);
+}
+.btn-invoke.is-disabled:hover {
+  background: transparent;
+  color: var(--texto-suave);
+  box-shadow: none;
+}
+
+/* Sacudida sutil al tocar algo aún no disponible */
+@keyframes shake-soft {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.card.shake { animation: shake-soft 0.4s ease; }

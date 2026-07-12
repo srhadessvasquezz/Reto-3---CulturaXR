@@ -1,5 +1,29 @@
 # Registro de Cambios
 
+## [0.3.0] — 2026-07-12
+
+### Cambiado
+- **Landing unificada** — se fusionaron las dos landings en `index.html`: la
+  estructura del sitio + la estética nocturna de leyendas (niebla, luciérnagas,
+  motor de sonido Web Audio, aparición al hacer scroll) de `culturaxr.html`,
+  ahora conectada a React (montaje en `#root` vía `/src/main.tsx`).
+- `index.html` usa `culturaxr.css` como hoja principal (antes `estilo.css`).
+- Sección "Invoca la experiencia" con grilla de 4 invocaciones (4 → 2 → 1
+  columnas según ancho, sin fila huérfana).
+
+### Agregado
+- **Invocación Pirámide de San Andrés** — tarjeta activa con `data-model-id="piramide"`;
+  `App.tsx` la detecta y abre la experiencia inmersiva (cámara + gestos + 3D).
+- **3 invocaciones placeholder** (El Cipitío, La Siguanaba, El Cadejo) en estado
+  `locked` / "Próximamente" — aún sin modelo asignado.
+- Estilos de estado en `culturaxr.css`: `.badge`, `.card--activa`, `.card.locked`,
+  `.btn-invoke.is-disabled`, animación `shake-soft`.
+- Firma sonora `piramide()` y tono `denied()` para invocaciones no disponibles.
+
+### Notas
+- `culturaxr.html` queda como referencia; la landing servida por Vite es `index.html`.
+- Se conserva el `<script>` de MediaPipe Hands por CDN (lo usa `HandOverlay` vía `window.Hands`).
+
 ## [0.2.0] — 2026-07-11
 
 ### Agregado
