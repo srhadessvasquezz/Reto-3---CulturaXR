@@ -1,13 +1,32 @@
 import { Suspense, useEffect, useRef } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, useGLTF, ContactShadows, Environment } from '@react-three/drei';
-import type { Group } from 'three';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, useGLTF, ContactShadows } from '@react-three/drei';
+import * as THREE from 'three';
 import type { Model3DDetail } from '../hooks/useModels';
 import type { GestureData } from '../types';
 
 function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene} scale={1} />;
+  const ref = useRef<THREE.Group>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    // Modelos .glb pueden venir en cualquier escala/origen. En vez de
+    // hardcodear scale/position (no hay forma de verlo antes de la demo),
+    // se auto-encuadra: mide el bounding box, lo reescala a ~3 unidades
+    // y lo centra en el origen.
+    const box = new THREE.Box3().setFromObject(ref.current);
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    ref.current.scale.setScalar(3 / maxDim);
+
+    const scaledBox = new THREE.Box3().setFromObject(ref.current);
+    const center = scaledBox.getCenter(new THREE.Vector3());
+    ref.current.position.sub(center);
+  }, [scene]);
+
+  return <primitive ref={ref} object={scene} rotation={[0, 0, 0]} />;
 }
 
 function Placeholder() {
@@ -122,7 +141,6 @@ export function ModelViewer({ model, gestureRef }: ModelViewerProps) {
         <Suspense fallback={<Placeholder />}>
           <ModelScene model={model} gestureRef={gestureRef} />
           <ContactShadows position={[0, -2, 0]} opacity={0.4} blur={2} />
-          <Environment preset="city" background={false} />
         </Suspense>
       </Canvas>
     </div>
