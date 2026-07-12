@@ -5,6 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/estilo.css" />
+    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
     <title>Hackathon Turismo SV</title>
   </head>
   <body>
@@ -12,13 +14,47 @@
       <h1 class="header_titulo">CulturaXR</h1>
       <p class="header_subtitulo">Bienvenidos a **CulturaXR**, una plataforma de realidad aumentada que transforma la forma en que turistas nacionales e internacionales descubren la riqueza cultural de El Salvador, ofreciendo experiencias inmersivas que conectan la historia, el patrimonio y la tecnología en un solo recorrido.
 </p>
+      <nav class="cx-nav">
+        <button class="cx-nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu">
+          ☰ Menú
+        </button>
+
+        <ul class="cx-nav__lista" id="nav-menu">
+          <li><a class="cx-nav__link" href="index.html">Inicio</a></li>
+          <li><a class="cx-nav__link" href="#">Leyendas</a></li>
+          <li><a class="cx-nav__link" href="#">Acerca de</a></li>
+        </ul>
+      </nav>
     </header>
+<section class="galeria-wrapper">
+  <h3 class="galeria-titulo">Recorré el sitio</h3>
+  <div class="galeria">
+    <div class="galeria_item">
+      <img src="img/3.jpg" alt="Entrada al sitio arqueológico" class="galeria_imagen">
+      <p class="galeria_descripcion">Descubre un Patrimonio de la Humanidad. Vive una experiencia inmersiva en la Joya de Cerén, donde la realidad aumentada revela la historia, la cultura y la vida cotidiana de una antigua comunidad maya, acercando el pasado a cada visitante.</p>
+    </div>
+    <div class="galeria-item">
+      <img src="img/2.jfif" alt="Pieza encontrada" class="galeria_imagen">
+      <p class="galeria_descripcion">Conecta con el legado de nuestros antepasados. Explora piezas arqueológicas, reliquias y objetos históricos mediante una experiencia interactiva que combina la riqueza cultural de El Salvador con tecnología de realidad aumentada, haciendo que cada visita al museo sea más educativa e inolvidable.</p>
+    </div>
+    <div class="galeria-item">
+      <img src="img/1.jpg" alt="Monumentos enterrados encontrados con el tiempo">
+      <p class="galeria_descripcion">Transformamos la manera de descubrir el patrimonio cultural de El Salvador. Con CulturaXR, los visitantes pueden explorar sitios históricos mediante realidad aumentada, visualizando reconstrucciones digitales, aprendiendo sobre su historia e interactuando con el entorno como nunca antes. Cada recorrido se convierte en una experiencia inmersiva que conecta tecnología, cultura y turismo.</p>
+    </div>
+  </div>
+</section>
     <section class="hero">
       <h2 class="hero_titulo">Joya de Ceren</h2>
       <p class="hero_subtitulo">Patrimonio de la Humanidad</p>
       <p class="hero_texto">La "Pompeya de América": una aldea maya sepultada por ceniza volcánica
       hace más de 1,400 años, preservada casi intacta.</p>
     </section>
+
+    <section class="mapa-wrapper">
+      <h3 class="mapa-titulo">Explorá el sitio</h3>
+      <div id="mapa" class="mapa"></div>
+    </section>
+
     <section class="sitio" id="info-sitio">
       <article class="sitio_dato">
         <h3 class="sitio_dato-titulo">¿Qué podremos encontrar acá?</h3>
@@ -26,13 +62,60 @@
         de la Humanidad por preservar la vida cotidiana maya, no solo templos.</p>
       </article>
     </section>
+
     <section class="cta" id="cta-experiencia">
       <p class="cta_texto">Activá la experiencia y descubrí sobre este lugar</p>
       <button class="cx-boton cx-boton-primario" id="btn-iniciar-experiencia">
         Iniciar experiencia
       </button>
     </section>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      const boton = document.getElementById('nav-toggle');
+      const menu = document.getElementById('nav-menu');
+
+      boton.addEventListener('click', () => {
+        menu.classList.toggle('abierto');
+        const expandido = menu.classList.contains('abierto');
+        boton.setAttribute('aria-expanded', expandido);
+      });
+    </script>
+
+    <script>
+      const mapa = new maplibregl.Map({
+        container: 'mapa',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [-89.3606, 13.8236],
+        zoom: 15
+      });
+
+      const personajes = [
+        { nombre: 'El Cipitío', coords: [-89.3609, 13.8238], id: 'cipitio' },
+        { nombre: 'La Siguanaba', coords: [-89.3600, 13.8233], id: 'siguanaba' },
+        { nombre: 'El Cadejo', coords: [-89.3612, 13.8230], id: 'cadejo' }
+      ];
+
+      personajes.forEach((personaje) => {
+        const elementoMarcador = document.createElement('button');
+        elementoMarcador.className = 'marcador-personaje';
+        elementoMarcador.textContent = '📍';
+        elementoMarcador.setAttribute('data-personaje', personaje.id);
+        elementoMarcador.setAttribute('aria-label', personaje.nombre);
+
+        elementoMarcador.addEventListener('click', () => {
+          console.log('Invocar a:', personaje.id);
+          // Acá después conectás la lógica real que activa la cámara
+          // y le pasa "personaje.id" a Diego para que sepa qué escena mostrar
+        });
+
+        new maplibregl.Marker({ element: elementoMarcador })
+          .setLngLat(personaje.coords)
+          .setPopup(new maplibregl.Popup().setText(personaje.nombre))
+          .addTo(mapa);
+      });
+    </script>
   </body>
 </html>
