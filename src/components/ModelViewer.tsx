@@ -11,20 +11,27 @@ const TARGET_SIZE = 3;
 function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url);
 
+  // useGLTF cachea y comparte la MISMA escena entre montajes. Como abajo se
+  // le escribe position, al remontar (reiniciar posición) la escena llega ya
+  // desplazada y el recálculo del centro la manda a un lado. Clonar por
+  // montaje garantiza un objeto fresco (sin posición residual) y un centrado
+  // correcto siempre, incluido el reset.
+  const model = useMemo(() => scene.clone(true), [scene]);
+
   // Los .glb llegan con tamaño y pivote arbitrarios: se centra la geometría
   // en el origen y se normaliza a TARGET_SIZE para que las rotaciones
   // (mouse y gestos) giren sobre el centro visual del modelo.
   const { offset, scale } = useMemo(() => {
-    const box = new Box3().setFromObject(scene);
+    const box = new Box3().setFromObject(model);
     const center = box.getCenter(new Vector3());
     const size = box.getSize(new Vector3());
     const maxDim = Math.max(size.x, size.y, size.z) || 1;
     return { offset: center.negate(), scale: TARGET_SIZE / maxDim };
-  }, [scene]);
+  }, [model]);
 
   return (
     <group scale={scale}>
-      <primitive object={scene} position={offset} />
+      <primitive object={model} position={offset} />
     </group>
   );
 }
@@ -147,9 +154,12 @@ function ModelScene({
 interface ModelViewerProps {
   model: Model3DDetail | null;
   gestureRef: React.RefObject<GestureData | null>;
+  // Expone el <canvas> DOM del renderer para poder componer capturas fuera
+  // de R3F. Opcional: sin consumidor, el visor funciona igual.
+  onCanvasReady?: (canvas: HTMLCanvasElement) => void;
 }
 
-export function ModelViewer({ model, gestureRef }: ModelViewerProps) {
+export function ModelViewer({ model, gestureRef, onCanvasReady }: ModelViewerProps) {
   return (
     <div className="model-viewer">
       {model && (
@@ -159,7 +169,11 @@ export function ModelViewer({ model, gestureRef }: ModelViewerProps) {
         </div>
       )}
 
-      <Canvas gl={{ alpha: true }} camera={{ position: [0, 0, 5], fov: 50 }}>
+      <Canvas
+        gl={{ alpha: true, preserveDrawingBuffer: true }}
+        camera={{ position: [0, 0, 5], fov: 50 }}
+        onCreated={({ gl }) => onCanvasReady?.(gl.domElement)}
+      >
         <TransparentBg />
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1} />

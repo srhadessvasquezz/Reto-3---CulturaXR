@@ -8,6 +8,7 @@ const COMMAND_LABELS: Record<GestureCommand, string> = {
   NEXT_MODEL: '✌️ 2 DEDOS (SIGUIENTE)',
   PREVIOUS_MODEL: '🖌️ 3 DEDOS (ANTERIOR)',
   MENU_TOGGLE: '🖐️ 4 DEDOS (MENÚ)',
+  TAKE_PHOTO: '📷 4 DEDOS (FOTO)',
 };
 
 interface GestureMonitorProps {
