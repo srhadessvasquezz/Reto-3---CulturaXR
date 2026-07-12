@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import type { GestureData } from '../types';
+import type { GestureCommand, GestureData } from '../types';
+import { classifyGesture, countExtendedFingers, type Handedness } from '../utils/gestureDetectors';
 
 const CONNECTIONS: [number, number][] = [
   [0, 1], [1, 2], [2, 3], [3, 4],
@@ -12,6 +13,9 @@ const CONNECTIONS: [number, number][] = [
 
 const COLORS: Record<string, string> = { Left: '#00FFFF', Right: '#FF6B6B' };
 const PINCH_THRESHOLD = 0.065;
+// Frames consecutivos de "ambas palmas" antes de disparar TOGGLE_FREEZE:
+// evita que un falso positivo de un frame congele el modelo.
+const FREEZE_DEBOUNCE_FRAMES = 8;
 
 function drawHand(
   ctx: CanvasRenderingContext2D,
@@ -77,6 +81,12 @@ export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayP
     let animationId: number | null = null;
     let running = true;
 
+    // Estado de clasificación entre frames (persiste por closure; se
+    // reinicia cuando el efecto vuelve a correr por cambio de stream).
+    let rawPrev: GestureCommand = 'NONE';
+    let freezeFrames = 0;   // frames sostenidos de "ambas palmas"
+    let freezeArmed = true; // permite disparar el toggle una sola vez por gesto
+
     async function waitForHands(): Promise<boolean> {
       for (let i = 0; i < 100; i++) {
         if (!running) return false;
@@ -126,15 +136,28 @@ export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayP
         $ctx.clearRect(0, 0, cw, ch);
 
         const gesture: GestureData = {
+          command: 'NONE',
           hand1: { active: false, sx: 0, sy: 0 },
           hand2: { active: false, sx: 0, sy: 0 },
+          hand1FingersExtended: 0,
+          hand2FingersExtended: 0,
+          isFrozen: false, // valor real inyectado aguas abajo (ImmersiveExperience)
+          commandConsumed: true,
         };
+
+        let hand1Lm: any = null;
+        let hand2Lm: any = null;
+        let hand1Label: Handedness | undefined;
+        let hand2Label: Handedness | undefined;
 
         if (results.multiHandLandmarks) {
           for (let i = 0; i < results.multiHandLandmarks.length; i++) {
             const lm = results.multiHandLandmarks[i];
-            const hand = results.multiHandedness[i]?.label ?? `Hand ${i}`;
+            const label = results.multiHandedness[i]?.label;
+            const hand = label ?? `Hand ${i}`;
             const color = COLORS[hand] ?? '#888';
+            const typedLabel: Handedness | undefined =
+              label === 'Left' || label === 'Right' ? label : undefined;
 
             const pts = lm.map((p: any) => ({
               x: mirrored ? (1 - p.x) * rw + ox : p.x * rw + ox,
@@ -149,11 +172,41 @@ export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayP
 
             if (i === 0) {
               gesture.hand1 = { active: pinching, sx: pinchSx, sy: pinchSy };
+              hand1Lm = lm;
+              hand1Label = typedLabel;
             } else if (i === 1) {
               gesture.hand2 = { active: pinching, sx: pinchSx, sy: pinchSy };
+              hand2Lm = lm;
+              hand2Label = typedLabel;
             }
           }
         }
+
+        // --- Clasificación de comandos (además de la pinza) ---
+        const raw = classifyGesture(hand1Lm, hand2Lm, rawPrev, hand1Label, hand2Label);
+        rawPrev = raw;
+
+        // La pinza tiene prioridad: mientras se rota/escala no se emiten
+        // comandos de dedos (evita que rotar dispare NEXT/PREV, etc.).
+        const pinching = gesture.hand1.active || gesture.hand2.active;
+        const command: GestureCommand = pinching ? 'NONE' : raw;
+
+        let commandConsumed = true;
+        if (command === 'TOGGLE_FREEZE') {
+          freezeFrames++;
+          if (freezeFrames >= FREEZE_DEBOUNCE_FRAMES && freezeArmed) {
+            freezeArmed = false;     // se dispara una sola vez por gesto
+            commandConsumed = false; // ModelViewer togglea el freeze este frame
+          }
+        } else {
+          freezeFrames = 0;
+          freezeArmed = true;        // re-armar al soltar el gesto
+        }
+
+        gesture.command = command;
+        gesture.hand1FingersExtended = hand1Lm ? countExtendedFingers(hand1Lm, hand1Label, 'hand1') : 0;
+        gesture.hand2FingersExtended = hand2Lm ? countExtendedFingers(hand2Lm, hand2Label, 'hand2') : 0;
+        gesture.commandConsumed = commandConsumed;
 
         onGesture?.(gesture);
       });

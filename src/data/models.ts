@@ -12,10 +12,10 @@ export interface Model3DDetail extends Model3D {
 
 const MODELS: Model3DDetail[] = [
   {
-    id: "torre-maya",
-    name: "Torre Maya de San Andrés",
+    id: "piramide",
+    name: "Pirámide de San Andrés",
     description:
-      "Torre ceremonial maya del período clásico tardío, ubicada en el sitio arqueológico San Andrés, en el valle de Zapotitán. Representa la avanzada arquitectura y cosmovisión de la civilización maya en El Salvador.",
+      "Centro ceremonial maya del período Clásico Tardío, ubicado en el valle de Zapotitán.",
     file: "/3d_models/torre_xd.glb",
     category: "arqueología",
     thumbnail: null,

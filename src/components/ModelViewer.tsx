@@ -57,10 +57,33 @@ function GestureControl({
   const controlsRef = useRef<any>(null);
   const prev = useRef({ sx: 0, sy: 0, active: false });
   const twoHand = useRef({ dist: 0, baseScale: 1 });
+  // Estado de congelamiento en ref (no useState) para no re-renderizar el
+  // árbol de R3F en cada toggle; el GestureMonitor lo lee vía gestureRef.
+  const frozen = useRef(false);
 
   useFrame(() => {
     const g = gestureRef.current;
     if (!g) return;
+
+    // TOGGLE_FREEZE: HandOverlay ya lo filtró al flanco de subida
+    // (commandConsumed === false solo en ese frame). Consumirlo evita
+    // que el toggle se dispare 60 veces por segundo.
+    if (g.command === 'TOGGLE_FREEZE' && !g.commandConsumed) {
+      g.commandConsumed = true;
+      frozen.current = !frozen.current;
+    }
+
+    // Reflejar el estado para el GestureMonitor (que pollea la ref).
+    g.isFrozen = frozen.current;
+
+    if (frozen.current) {
+      // Congelado: ignora mouse y gestos; el modelo queda inmóvil y solo
+      // escucha TOGGLE_FREEZE (procesado arriba) para descongelar.
+      if (controlsRef.current) controlsRef.current.enabled = false;
+      prev.current.active = false;
+      twoHand.current.dist = 0;
+      return;
+    }
 
     const anyPinch = g.hand1.active || g.hand2.active;
     if (controlsRef.current) controlsRef.current.enabled = !anyPinch;
