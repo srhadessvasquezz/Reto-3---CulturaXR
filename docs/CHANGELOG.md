@@ -1,5 +1,14 @@
 # Registro de Cambios
 
+## [0.4.1] — 2026-07-12
+
+### Eliminado
+- **Modelo Macuahuitl** — removido del proyecto: su tarjeta de invocación en
+  `index.html`, su registro en `src/data/models.ts`, su ficha en
+  `src/data/modelInfo.ts` y el archivo `public/3d_models/Macuahuitl.glb`.
+  Quedan 3 invocaciones activas: Pirámide de San Andrés, Salvador del Mundo y
+  Trompeta de Barro.
+
 ## [0.4.0] — 2026-07-12
 
 ### Agregado

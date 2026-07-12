@@ -27,16 +27,6 @@ const MODELS: Model3DDetail[] = [
     thumbnail: null,
   },
   {
-    id: "macuahuitl",
-    name: "Macuahuitl",
-    description:
-      "Garrote-espada mesoamericano de madera con filos de obsidiana, arma principal de los guerreros nahuas y pipiles.",
-    // El archivo no lleva espacios; la ruta va tal cual.
-    file: asset("3d_models/Macuahuitl.glb"),
-    category: "arma",
-    thumbnail: null,
-  },
-  {
     id: "salvador-del-mundo",
     name: "Salvador del Mundo",
     description:
