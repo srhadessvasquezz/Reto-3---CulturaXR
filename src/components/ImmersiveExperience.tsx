@@ -17,6 +17,10 @@ interface ImmersiveExperienceProps {
   onClose: () => void;
 }
 
+// Hay que sostener el gesto de foto (4 dedos) este tiempo antes de disparar,
+// para evitar fotos accidentales al pasar la mano frente a la cámara.
+const PHOTO_HOLD_MS = 2250;
+
 // La cámara y MediaPipe viven dentro de este componente: useCamera pide
 // getUserMedia al montarse y detiene el stream al desmontarse, así que
 // abrir/cerrar la experiencia enciende/apaga la webcam.
@@ -41,18 +45,33 @@ export function ImmersiveExperience({ modelId, onClose }: ImmersiveExperiencePro
   const showCaptureRef = useRef(false);
   showCaptureRef.current = showCapture;
   const prevCommandRef = useRef<GestureCommand>('NONE');
+  // Momento en que empezó el gesto de foto sostenido, y si ya se disparó
+  // (para no repetir mientras se mantiene la mano).
+  const photoHoldStartRef = useRef<number | null>(null);
+  const photoFiredRef = useRef(false);
 
-  // Polling de gestos (flanco de subida; el comando llega repetido cada frame):
-  // - 4 dedos (TAKE_PHOTO) → abre el flujo de foto (igual que el botón 📷).
-  // - 3 dedos (PREVIOUS_MODEL, hoy sin acción) → abre/cierra el menú de acciones.
+  // Polling de gestos (el comando llega repetido cada frame):
+  // - 4 dedos (TAKE_PHOTO) → foto, pero solo tras sostener el gesto
+  //   PHOTO_HOLD_MS de forma continua (evita disparos accidentales).
+  // - 3 dedos (PREVIOUS_MODEL, hoy sin acción) → abre/cierra el menú (flanco).
   // No se modifica el detector de gestos: solo se consumen comandos existentes.
   useEffect(() => {
     const id = setInterval(() => {
       const command = gestureRef.current?.command ?? 'NONE';
       const prev = prevCommandRef.current;
 
-      if (command === 'TAKE_PHOTO' && prev !== 'TAKE_PHOTO' && !showCaptureRef.current) {
-        setShowCapture(true);
+      if (command === 'TAKE_PHOTO' && !showCaptureRef.current) {
+        if (photoHoldStartRef.current === null) {
+          photoHoldStartRef.current = Date.now();
+        }
+        if (!photoFiredRef.current && Date.now() - photoHoldStartRef.current >= PHOTO_HOLD_MS) {
+          photoFiredRef.current = true;
+          setShowCapture(true);
+        }
+      } else {
+        // Se soltó el gesto (o el flujo ya está abierto): reiniciar el hold.
+        photoHoldStartRef.current = null;
+        photoFiredRef.current = false;
       }
 
       if (command === 'PREVIOUS_MODEL' && prev !== 'PREVIOUS_MODEL' && !showCaptureRef.current) {
