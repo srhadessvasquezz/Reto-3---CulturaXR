@@ -1,13 +1,43 @@
 import { Suspense, useEffect, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, ContactShadows, Environment } from '@react-three/drei';
-import type { Group } from 'three';
+import { Box3, Vector3, type Group } from 'three';
 import type { Model3DDetail } from '../hooks/useModels';
 import type { GestureData } from '../types';
 
 function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene} scale={1} />;
+  const meshRef = useRef<Group>(null);
+  const centered = useRef(false);
+
+  useEffect(() => {
+    if (centered.current) return;
+    const root = meshRef.current;
+    if (!root) return;
+
+    root.updateWorldMatrix(true, false);
+    const box = new Box3().setFromObject(root);
+    const center = new Vector3();
+    box.getCenter(center);
+    const size = new Vector3();
+    box.getSize(size);
+
+    root.position.sub(center);
+
+    const maxDim = Math.max(size.x, size.y, size.z);
+    if (maxDim > 0) {
+      const s = 2.5 / maxDim;
+      root.scale.setScalar(s);
+    }
+
+    centered.current = true;
+  }, [scene]);
+
+  return (
+    <group ref={meshRef}>
+      <primitive object={scene} />
+    </group>
+  );
 }
 
 function Placeholder() {
