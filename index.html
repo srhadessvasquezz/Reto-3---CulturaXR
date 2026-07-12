@@ -1,122 +1,494 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/estilo.css" />
-    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-    <title>Hackathon Turismo SV</title>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <header class="cx-header">
-      <h1 class="header_titulo">CulturaXR</h1>
-      <p class="header_subtitulo">Bienvenidos a **CulturaXR**, una plataforma de realidad aumentada que transforma la forma en que turistas nacionales e internacionales descubren la riqueza cultural de El Salvador, ofreciendo experiencias inmersivas que conectan la historia, el patrimonio y la tecnología en un solo recorrido.
-</p>
-      <nav class="cx-nav">
-        <button class="cx-nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu">
-          ☰ Menú
-        </button>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CULTURAXR — Invocación de Leyendas · Joya de Cerén</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet" href="/culturaxr.css" />
+  <!-- MediaPipe Hands: HandOverlay lo usa vía window.Hands. No quitar. -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
 
-        <ul class="cx-nav__lista" id="nav-menu">
-          <li><a class="cx-nav__link" href="index.html">Inicio</a></li>
-          <li><a class="cx-nav__link" href="#">Leyendas</a></li>
-          <li><a class="cx-nav__link" href="#">Acerca de</a></li>
-        </ul>
-      </nav>
-    </header>
-<section class="galeria-wrapper">
-  <h3 class="galeria-titulo">Recorré el sitio</h3>
-  <div class="galeria">
-    <div class="galeria_item">
-      <img src="img/3.jpg" alt="Entrada al sitio arqueológico" class="galeria_imagen">
-      <p class="galeria_descripcion">Descubre un Patrimonio de la Humanidad. Vive una experiencia inmersiva en la Joya de Cerén, donde la realidad aumentada revela la historia, la cultura y la vida cotidiana de una antigua comunidad maya, acercando el pasado a cada visitante.</p>
-    </div>
-    <div class="galeria-item">
-      <img src="img/2.jfif" alt="Pieza encontrada" class="galeria_imagen">
-      <p class="galeria_descripcion">Conecta con el legado de nuestros antepasados. Explora piezas arqueológicas, reliquias y objetos históricos mediante una experiencia interactiva que combina la riqueza cultural de El Salvador con tecnología de realidad aumentada, haciendo que cada visita al museo sea más educativa e inolvidable.</p>
-    </div>
-    <div class="galeria-item">
-      <img src="img/1.jpg" alt="Monumentos enterrados encontrados con el tiempo">
-      <p class="galeria_descripcion">Transformamos la manera de descubrir el patrimonio cultural de El Salvador. Con CulturaXR, los visitantes pueden explorar sitios históricos mediante realidad aumentada, visualizando reconstrucciones digitales, aprendiendo sobre su historia e interactuando con el entorno como nunca antes. Cada recorrido se convierte en una experiencia inmersiva que conecta tecnología, cultura y turismo.</p>
-    </div>
-  </div>
-</section>
-    <section class="hero">
-      <h2 class="hero_titulo">Joya de Ceren</h2>
-      <p class="hero_subtitulo">Patrimonio de la Humanidad</p>
-      <p class="hero_texto">La "Pompeya de América": una aldea maya sepultada por ceniza volcánica
-      hace más de 1,400 años, preservada casi intacta.</p>
-    </section>
+<!-- ═══ CAPAS DE AMBIENTE ═══ -->
+<div class="fog fog-1"></div>
+<div class="fog fog-2"></div>
+<canvas id="fireflies"></canvas>
+<div class="vignette"></div>
+<div id="flash"></div>
 
-    <section class="mapa-wrapper">
-      <h3 class="mapa-titulo">Explorá el sitio</h3>
-      <div id="mapa" class="mapa"></div>
-    </section>
+<div class="contenido">
 
-    <section class="sitio" id="info-sitio">
-      <article class="sitio_dato">
-        <h3 class="sitio_dato-titulo">¿Qué podremos encontrar acá?</h3>
-        <p class="sitio_dato-texto">Es el único sitio arqueológico de Latinoamérica declarado Patrimonio
-        de la Humanidad por preservar la vida cotidiana maya, no solo templos.</p>
-      </article>
-    </section>
+  <!-- ═══ HEADER ═══ -->
+  <header class="cx-header">
+    <p class="header_eyebrow">Joya de Cerén · Patrimonio UNESCO · El Salvador</p>
+    <h1 class="header_titulo">CULTURA<span class="accent">XR</span></h1>
+    <p class="header_subtitulo">Una plataforma de realidad aumentada que transforma la forma en que turistas nacionales e internacionales descubren la riqueza cultural de El Salvador: experiencias inmersivas que conectan historia, patrimonio y tecnología en un solo recorrido.</p>
 
-    <section class="cta" id="cta-experiencia">
-      <p class="cta_texto">Activá la experiencia y descubrí sobre este lugar</p>
-      <button class="cx-boton cx-boton-primario" id="btn-experiencia-piramide" data-model-id="piramide">
-        Conocer la Pirámide de San Andrés
+    <nav class="cx-nav">
+      <button class="cx-nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu">
+        ☰ Menú
       </button>
-    </section>
+      <ul class="cx-nav__lista" id="nav-menu">
+        <li><a class="cx-nav__link" href="index.html">Inicio</a></li>
+        <li><a class="cx-nav__link" href="#invocaciones">Invocaciones</a></li>
+        <li><a class="cx-nav__link" href="#info-sitio">Acerca de</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <div class="sep"></div>
 
-    <script>
-      const boton = document.getElementById('nav-toggle');
-      const menu = document.getElementById('nav-menu');
+  <!-- ═══ HERO ═══ -->
+  <section class="hero reveal">
+    <h2 class="hero_titulo">Joya de Cerén</h2>
+    <p class="hero_subtitulo">Patrimonio de la Humanidad</p>
+    <p class="hero_texto">La "Pompeya de América": una aldea maya sepultada por ceniza volcánica hace más de 1,400 años, preservada casi intacta.</p>
+  </section>
 
-      boton.addEventListener('click', () => {
-        menu.classList.toggle('abierto');
-        const expandido = menu.classList.contains('abierto');
-        boton.setAttribute('aria-expanded', expandido);
-      });
-    </script>
+  <!-- ═══ GALERÍA ═══ -->
+  <section class="galeria-wrapper reveal">
+    <h3 class="seccion-titulo">Recorré el sitio</h3>
+    <div class="galeria">
+      <div class="galeria_item">
+        <img src="img/3.jpg" alt="Entrada al sitio arqueológico" class="galeria_imagen">
+        <p class="galeria_descripcion">Descubre un Patrimonio de la Humanidad. Vive una experiencia inmersiva en la Joya de Cerén, donde la realidad aumentada revela la historia, la cultura y la vida cotidiana de una antigua comunidad maya.</p>
+      </div>
+      <div class="galeria_item">
+        <img src="img/2.jfif" alt="Pieza encontrada" class="galeria_imagen">
+        <p class="galeria_descripcion">Conecta con el legado de nuestros antepasados. Explora piezas arqueológicas, reliquias y objetos históricos mediante una experiencia interactiva que hace cada visita más educativa e inolvidable.</p>
+      </div>
+      <div class="galeria_item">
+        <img src="img/1.jpg" alt="Monumentos enterrados encontrados con el tiempo" class="galeria_imagen">
+        <p class="galeria_descripcion">Transformamos la manera de descubrir el patrimonio cultural de El Salvador: reconstrucciones digitales, historia interactiva y recorridos inmersivos que conectan tecnología, cultura y turismo.</p>
+      </div>
+    </div>
+  </section>
 
-    <script>
-      const mapa = new maplibregl.Map({
-        container: 'mapa',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: [-89.3606, 13.8236],
-        zoom: 15
-      });
+  <!-- ═══ MAPA ═══ -->
+  <section class="mapa-wrapper reveal">
+    <h3 class="seccion-titulo">Explorá el sitio</h3>
+    <div id="mapa" class="mapa"></div>
+  </section>
 
-      const personajes = [
-        { nombre: 'El Cipitío', coords: [-89.3609, 13.8238], id: 'cipitio' },
-        { nombre: 'La Siguanaba', coords: [-89.3600, 13.8233], id: 'siguanaba' },
-        { nombre: 'El Cadejo', coords: [-89.3612, 13.8230], id: 'cadejo' }
-      ];
+  <!-- ═══ INVOCACIONES ═══
+       Cada tarjeta con [data-model-id] es detectada por React (src/App.tsx),
+       que abre la experiencia inmersiva de cámara + gestos + 3D.
+       Las tarjetas .locked aún no tienen modelo asignado. -->
+  <section class="leyendas-wrapper reveal" id="invocaciones" aria-label="Invocaciones disponibles">
+    <h3 class="seccion-titulo">Invoca la experiencia</h3>
+    <p class="hint">Elige una invocación para comenzar</p>
 
-      personajes.forEach((personaje) => {
-        const elementoMarcador = document.createElement('button');
-        elementoMarcador.className = 'marcador-personaje';
-        elementoMarcador.textContent = '📍';
-        elementoMarcador.setAttribute('data-personaje', personaje.id);
-        elementoMarcador.setAttribute('aria-label', personaje.nombre);
+    <div class="grid">
 
-        elementoMarcador.addEventListener('click', () => {
-          console.log('Invocar a:', personaje.id);
-          // Acá después conectás la lógica real que activa la cámara
-          // y le pasa "personaje.id" a Diego para que sepa qué escena mostrar
-        });
+      <!-- ── PIRÁMIDE — invocación activa (modelo real) ── -->
+      <article class="card card--activa" data-model-id="piramide" data-id="piramide" data-nombre="Pirámide de San Andrés">
+        <span class="badge">Disponible</span>
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="22" r="6" fill="rgba(200,168,75,.14)" stroke="rgba(200,168,75,.5)" stroke-width="1.2"/>
+            <path d="M15 96 H85 L74 80 H26 Z" fill="rgba(200,168,75,.08)" stroke="rgba(200,168,75,.55)" stroke-width="1.3"/>
+            <path d="M26 80 H74 L64 64 H36 Z" fill="rgba(200,168,75,.09)" stroke="rgba(200,168,75,.55)" stroke-width="1.3"/>
+            <path d="M36 64 H64 L56 50 H44 Z" fill="rgba(200,168,75,.1)" stroke="rgba(200,168,75,.6)" stroke-width="1.3"/>
+            <path d="M44 50 H56 V40 H44 Z" fill="rgba(200,168,75,.12)" stroke="rgba(200,168,75,.65)" stroke-width="1.2"/>
+            <line x1="47" y1="50" x2="47" y2="40" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <line x1="53" y1="50" x2="53" y2="40" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <path d="M46 96 V64 M54 96 V64" stroke="rgba(200,168,75,.5)" stroke-width="1.2"/>
+            <line x1="46" y1="90" x2="54" y2="90" stroke="rgba(200,168,75,.35)" stroke-width="1"/>
+            <line x1="46" y1="84" x2="54" y2="84" stroke="rgba(200,168,75,.35)" stroke-width="1"/>
+            <line x1="46" y1="78" x2="54" y2="78" stroke="rgba(200,168,75,.35)" stroke-width="1"/>
+            <line x1="46" y1="72" x2="54" y2="72" stroke="rgba(200,168,75,.35)" stroke-width="1"/>
+            <line x1="47" y1="66" x2="53" y2="66" stroke="rgba(200,168,75,.35)" stroke-width="1"/>
+            <ellipse cx="50" cy="100" rx="40" ry="6" fill="rgba(200,168,75,.05)" stroke="rgba(200,168,75,.3)" stroke-width="1"/>
+          </svg>
+        </div>
+        <p class="tipo">Arqueología · Maya</p>
+        <h3>Pirámide de San Andrés</h3>
+        <p class="desc">Centro ceremonial maya del período Clásico Tardío, en el valle de Zapotitán. Exploralo en 3D y manipulalo con gestos de tu mano.</p>
+        <button class="btn-invoke" aria-label="Invocar la Pirámide de San Andrés">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Invocar
+        </button>
+      </article>
 
-        new maplibregl.Marker({ element: elementoMarcador })
-          .setLngLat(personaje.coords)
-          .setPopup(new maplibregl.Popup().setText(personaje.nombre))
-          .addTo(mapa);
-      });
-    </script>
-  </body>
+      <!-- ── MACUAHUITL — invocación activa ── -->
+      <article class="card card--activa" data-model-id="macuahuitl" data-id="macuahuitl" data-nombre="Macuahuitl">
+        <span class="badge">Disponible</span>
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="46" y="72" width="8" height="36" rx="3" fill="rgba(200,168,75,.1)" stroke="rgba(200,168,75,.6)" stroke-width="1.3"/>
+            <line x1="44" y1="82" x2="56" y2="82" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <line x1="44" y1="88" x2="56" y2="88" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <line x1="44" y1="94" x2="56" y2="94" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <line x1="44" y1="100" x2="56" y2="100" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <path d="M40 74 Q40 22 50 12 Q60 22 60 74 Z" fill="rgba(200,168,75,.08)" stroke="rgba(200,168,75,.62)" stroke-width="1.3"/>
+            <line x1="50" y1="70" x2="50" y2="22" stroke="rgba(200,168,75,.3)" stroke-width="1"/>
+            <path d="M40 66 L33 62 L40 58 Z" fill="rgba(200,168,75,.5)"/>
+            <path d="M40 54 L33 50 L40 46 Z" fill="rgba(200,168,75,.5)"/>
+            <path d="M40 42 L34 38 L41 33 Z" fill="rgba(200,168,75,.5)"/>
+            <path d="M60 66 L67 62 L60 58 Z" fill="rgba(200,168,75,.5)"/>
+            <path d="M60 54 L67 50 L60 46 Z" fill="rgba(200,168,75,.5)"/>
+            <path d="M60 42 L66 38 L59 33 Z" fill="rgba(200,168,75,.5)"/>
+          </svg>
+        </div>
+        <p class="tipo">Arma · Guerra</p>
+        <h3>Macuahuitl</h3>
+        <p class="desc">Garrote-espada mesoamericano de madera con filos de obsidiana. Arma de los guerreros pipiles del señorío de Cuzcatlán. Exploralo en 3D con gestos.</p>
+        <button class="btn-invoke" aria-label="Invocar el Macuahuitl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Invocar
+        </button>
+      </article>
+
+      <!-- ── SALVADOR DEL MUNDO — invocación activa ── -->
+      <article class="card card--activa" data-model-id="salvador-del-mundo" data-id="salvador-del-mundo" data-nombre="Salvador del Mundo">
+        <span class="badge">Disponible</span>
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="24" r="3" fill="rgba(200,168,75,.14)" stroke="rgba(200,168,75,.45)" stroke-width="1"/>
+            <circle cx="50" cy="40" r="5" fill="rgba(200,168,75,.1)" stroke="rgba(200,168,75,.65)" stroke-width="1.3"/>
+            <path d="M50 45 V57" stroke="rgba(200,168,75,.65)" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M37 50 H63" stroke="rgba(200,168,75,.6)" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="50" cy="76" r="20" fill="rgba(200,168,75,.07)" stroke="rgba(200,168,75,.6)" stroke-width="1.4"/>
+            <ellipse cx="50" cy="76" rx="20" ry="7" fill="none" stroke="rgba(200,168,75,.32)" stroke-width="1"/>
+            <path d="M50 56 V96" stroke="rgba(200,168,75,.3)" stroke-width="1"/>
+            <path d="M32 70 Q50 64 68 70" stroke="rgba(200,168,75,.28)" stroke-width="1" fill="none"/>
+            <path d="M32 82 Q50 88 68 82" stroke="rgba(200,168,75,.28)" stroke-width="1" fill="none"/>
+            <path d="M30 106 H70 L64 98 H36 Z" fill="rgba(200,168,75,.08)" stroke="rgba(200,168,75,.5)" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <p class="tipo">Monumento · Nacional</p>
+        <h3>Salvador del Mundo</h3>
+        <p class="desc">La figura de Cristo sobre el globo terráqueo: el ícono nacional de El Salvador, en el corazón de San Salvador. Exploralo en 3D con gestos.</p>
+        <button class="btn-invoke" aria-label="Invocar el Salvador del Mundo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Invocar
+        </button>
+      </article>
+
+      <!-- ── TROMPETA DE BARRO — invocación activa ── -->
+      <article class="card card--activa" data-model-id="trompeta-de-barro" data-id="trompeta-de-barro" data-nombre="Trompeta de Barro">
+        <span class="badge">Disponible</span>
+        <div class="icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="46" r="6" fill="rgba(200,168,75,.1)" stroke="rgba(200,168,75,.62)" stroke-width="1.3"/>
+            <circle cx="26" cy="46" r="2.5" fill="none" stroke="rgba(200,168,75,.4)" stroke-width="1"/>
+            <path d="M31 48 Q54 56 58 76 Q60 90 70 92" fill="none" stroke="rgba(200,168,75,.6)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M64 84 Q84 80 90 100 Q74 106 64 98 Z" fill="rgba(200,168,75,.09)" stroke="rgba(200,168,75,.62)" stroke-width="1.3"/>
+            <ellipse cx="80" cy="94" rx="9" ry="6" fill="none" stroke="rgba(200,168,75,.35)" stroke-width="1"/>
+            <circle cx="44" cy="55" r="1.3" fill="rgba(200,168,75,.45)"/>
+            <circle cx="53" cy="66" r="1.3" fill="rgba(200,168,75,.45)"/>
+            <circle cx="58" cy="78" r="1.3" fill="rgba(200,168,75,.45)"/>
+            <path d="M14 40 Q9 46 14 52" stroke="rgba(200,168,75,.3)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <path d="M9 36 Q2 46 9 56" stroke="rgba(200,168,75,.2)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="tipo">Instrumento · Ritual</p>
+        <h3>Trompeta de Barro</h3>
+        <p class="desc">Instrumento de viento de cerámica de las culturas precolombinas. Su sonido grave acompañaba las ceremonias. Exploralo en 3D con gestos.</p>
+        <button class="btn-invoke" aria-label="Invocar la Trompeta de Barro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Invocar
+        </button>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ═══ INFO DEL SITIO ═══ -->
+  <section class="sitio reveal" id="info-sitio">
+    <article class="sitio_dato">
+      <h3 class="sitio_dato-titulo">¿Qué podremos encontrar acá?</h3>
+      <p class="sitio_dato-texto">Es el único sitio arqueológico de Latinoamérica declarado Patrimonio de la Humanidad por preservar la vida cotidiana maya, no solo templos.</p>
+    </article>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta reveal" id="cta-experiencia">
+    <p class="cta_texto">Activá la experiencia y descubrí sobre este lugar</p>
+    <button class="cx-boton cx-boton-primario" id="btn-iniciar-experiencia">
+      Iniciar experiencia
+    </button>
+  </section>
+
+</div>
+
+<!-- ═══ TOGGLE DE SONIDO ═══ -->
+<button class="sound-toggle" id="sound-toggle" aria-label="Activar o silenciar sonido" title="Sonido">
+  <svg id="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+  <svg id="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+</button>
+
+<!-- ═══ MONTAJE DE REACT ═══
+     App.tsx escucha clicks en [data-model-id] y monta <ImmersiveExperience>
+     (cámara + hand tracking + 3D) sobre esta landing. -->
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+
+<script>
+/* ═══════════════════════════════════════════
+   MOTOR DE SONIDO — Web Audio API
+   Todo sintetizado en el navegador. Cero archivos.
+   ═══════════════════════════════════════════ */
+const Audio3 = (function() {
+  let ctx = null;
+  let master = null;
+  let ambientNodes = [];
+  let muted = false;
+
+  function init() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.6;
+    master.connect(ctx.destination);
+  }
+
+  function tone(freq, dur, type, vol, delay = 0, freqEnd = null) {
+    if (!ctx || muted) return;
+    const t0 = ctx.currentTime + delay;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g); g.connect(master);
+    osc.start(t0); osc.stop(t0 + dur + 0.05);
+  }
+
+  function noise(dur, vol, filterFreq, delay = 0) {
+    if (!ctx || muted) return null;
+    const t0 = ctx.currentTime + delay;
+    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = filterFreq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + dur * 0.3);
+    g.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(filter); filter.connect(g); g.connect(master);
+    src.start(t0);
+    return { src, g };
+  }
+
+  return {
+    init,
+    get muted() { return muted; },
+    toggleMute() {
+      muted = !muted;
+      if (muted) this.stopAmbient();
+      return muted;
+    },
+
+    hover() {
+      init();
+      tone(880, 0.09, 'sine', 0.06);
+    },
+
+    /* Pirámide: acorde ascendente y resonante, tono ceremonial */
+    piramide() {
+      init();
+      tone(392, 0.5, 'triangle', 0.16, 0.00, 523);
+      tone(523, 0.5, 'sine', 0.16, 0.12);
+      tone(659, 0.6, 'sine', 0.14, 0.24);
+      tone(784, 0.7, 'triangle', 0.10, 0.36);
+      noise(0.5, 0.03, 2200, 0.05);
+    },
+
+    /* Invocación aún no disponible: tono corto y apagado */
+    denied() {
+      init();
+      tone(180, 0.16, 'sine', 0.10, 0);
+      tone(140, 0.20, 'sine', 0.08, 0.06);
+    },
+
+    startAmbient() {
+      init();
+      if (muted) return;
+      this.stopAmbient();
+      const t0 = ctx.currentTime;
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sine'; osc1.frequency.value = 110;
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine'; osc2.frequency.value = 165.2;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(0.045, t0 + 2.5);
+
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.12;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 0.018;
+      lfo.connect(lfoGain); lfoGain.connect(g.gain);
+
+      osc1.connect(g); osc2.connect(g); g.connect(master);
+      osc1.start(); osc2.start(); lfo.start();
+      ambientNodes = [osc1, osc2, lfo, g];
+    },
+
+    stopAmbient() {
+      if (!ambientNodes.length || !ctx) return;
+      const g = ambientNodes[3];
+      try {
+        g.gain.cancelScheduledValues(ctx.currentTime);
+        g.gain.setValueAtTime(g.gain.value, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.8);
+      } catch(e) {}
+      const nodes = ambientNodes;
+      setTimeout(() => nodes.slice(0, 3).forEach(n => { try { n.stop(); } catch(e) {} }), 900);
+      ambientNodes = [];
+    }
+  };
+})();
+
+/* ═══ LUCIÉRNAGAS ═══ */
+(function() {
+  const cv = document.getElementById('fireflies');
+  const cx = cv.getContext('2d');
+  function sz() { cv.width = innerWidth; cv.height = innerHeight; }
+  sz(); addEventListener('resize', sz);
+
+  const N = 60;
+  const p = Array.from({length: N}, () => ({
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight,
+    r: Math.random() * 1.8 + 0.4,
+    a: Math.random(),
+    da: (Math.random() > .5 ? 1 : -1) * (0.006 + Math.random() * 0.006),
+    vx: (Math.random() - .5) * 0.35,
+    vy: (Math.random() - .5) * 0.35 - 0.12,
+  }));
+
+  function frame() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    for (const f of p) {
+      f.x += f.vx; f.y += f.vy;
+      f.a += f.da;
+      if (f.a <= 0 || f.a >= 1) f.da *= -1;
+      if (f.x < 0) f.x = cv.width;
+      if (f.x > cv.width) f.x = 0;
+      if (f.y < 0) f.y = cv.height;
+      if (f.y > cv.height) f.y = 0;
+
+      cx.beginPath();
+      cx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      cx.fillStyle = `rgba(200,168,75,${f.a * .72})`;
+      cx.fill();
+      cx.beginPath();
+      cx.arc(f.x, f.y, f.r * 3.5, 0, Math.PI * 2);
+      cx.fillStyle = `rgba(200,168,75,${f.a * .07})`;
+      cx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ═══ NAV ═══ */
+const botonNav = document.getElementById('nav-toggle');
+const menuNav = document.getElementById('nav-menu');
+
+botonNav.addEventListener('click', () => {
+  menuNav.classList.toggle('abierto');
+  const expandido = menuNav.classList.contains('abierto');
+  botonNav.setAttribute('aria-expanded', expandido);
+});
+
+/* ═══ APARICIÓN AL HACER SCROLL ═══ */
+const observador = new IntersectionObserver((entradas) => {
+  entradas.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observador.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observador.observe(el));
+
+/* ═══ MAPA — MapLibre ═══ */
+const mapa = new maplibregl.Map({
+  container: 'mapa',
+  style: 'https://tiles.openfreemap.org/styles/liberty',
+  center: [-89.3606, 13.8236],
+  zoom: 15
+});
+
+const marcadores = [
+  { nombre: 'Pirámide de San Andrés', coords: [-89.3606, 13.8236], id: 'piramide' },
+];
+
+marcadores.forEach((m) => {
+  const el = document.createElement('button');
+  el.className = 'marcador-personaje';
+  el.textContent = '📍';
+  el.setAttribute('data-personaje', m.id);
+  el.setAttribute('aria-label', m.nombre);
+
+  new maplibregl.Marker({ element: el })
+    .setLngLat(m.coords)
+    .setPopup(new maplibregl.Popup().setText(m.nombre))
+    .addTo(mapa);
+});
+
+/* ═══ INTERACCIÓN — INVOCACIÓN ═══
+   Las tarjetas con [data-model-id] son detectadas por React (src/App.tsx),
+   que monta la experiencia inmersiva de cámara + gestos + 3D.
+   Aquí solo agregamos la capa sensorial (sonido + destello) y el
+   feedback de las invocaciones que aún no tienen modelo. */
+const flash = document.getElementById('flash');
+
+let lastHover = 0;
+document.querySelectorAll('.card:not(.locked)').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    const now = Date.now();
+    if (now - lastHover > 400) { Audio3.hover(); lastHover = now; }
+  });
+  card.addEventListener('click', () => {
+    const id = card.dataset.id;
+    if (Audio3[id]) Audio3[id](); else Audio3.piramide();
+    flash.classList.add('on');
+    setTimeout(() => flash.classList.remove('on'), 500);
+    /* React toma el relevo: detecta el click en [data-model-id]
+       y abre <ImmersiveExperience>. No abrimos overlay aquí. */
+  });
+});
+
+/* Invocaciones sin modelo todavía: feedback suave, no abren nada */
+document.querySelectorAll('.card.locked').forEach(card => {
+  card.addEventListener('click', () => {
+    Audio3.init(); Audio3.denied();
+    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+  });
+});
+
+/* CTA: baja a la sección de invocaciones */
+document.getElementById('btn-iniciar-experiencia').addEventListener('click', () => {
+  document.getElementById('invocaciones').scrollIntoView({ behavior: 'smooth' });
+});
+
+/* Toggle de sonido */
+const btnSound = document.getElementById('sound-toggle');
+btnSound.addEventListener('click', () => {
+  Audio3.init();
+  const m = Audio3.toggleMute();
+  btnSound.classList.toggle('muted', m);
+  document.getElementById('icon-sound-on').style.display  = m ? 'none' : 'block';
+  document.getElementById('icon-sound-off').style.display = m ? 'block' : 'none';
+});
+</script>
+
+</body>
 </html>

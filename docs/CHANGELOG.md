@@ -1,5 +1,47 @@
 # Registro de Cambios
 
+## [0.4.0] — 2026-07-12
+
+### Agregado
+- **3 modelos 3D nuevos** (merge de `origin/main`): `Macuahuitl.glb`,
+  `Salvador del mundo.glb`, `trompeta de barro.glb` en `public/3d_models/`.
+- Registro de los 3 modelos en `src/data/models.ts` (con rutas URL-encoded
+  para los nombres con espacios) y fichas completas en `src/data/modelInfo.ts`.
+- Las 3 tarjetas antes "Próximamente" ahora son invocaciones **activas**,
+  cada una con su icono SVG, categoría e información propias:
+  - **Macuahuitl** — arma de guerra mesoamericana (obsidiana).
+  - **Salvador del Mundo** — monumento nacional de El Salvador.
+  - **Trompeta de Barro** — instrumento ritual precolombino.
+
+### Notas
+- Cada modelo abre la experiencia inmersiva vía `data-model-id`; la info del
+  visor y del panel "Ver información" se genera según el `id` del modelo.
+- Verificado: los 4 `.glb` se sirven (200) y son glTF 2.0 válidos; type-check limpio.
+
+## [0.3.0] — 2026-07-12
+
+### Cambiado
+- **Landing unificada** — se fusionaron las dos landings en `index.html`: la
+  estructura del sitio + la estética nocturna de leyendas (niebla, luciérnagas,
+  motor de sonido Web Audio, aparición al hacer scroll) de `culturaxr.html`,
+  ahora conectada a React (montaje en `#root` vía `/src/main.tsx`).
+- `index.html` usa `culturaxr.css` como hoja principal (antes `estilo.css`).
+- Sección "Invoca la experiencia" con grilla de 4 invocaciones (4 → 2 → 1
+  columnas según ancho, sin fila huérfana).
+
+### Agregado
+- **Invocación Pirámide de San Andrés** — tarjeta activa con `data-model-id="piramide"`;
+  `App.tsx` la detecta y abre la experiencia inmersiva (cámara + gestos + 3D).
+- **3 invocaciones placeholder** (El Cipitío, La Siguanaba, El Cadejo) en estado
+  `locked` / "Próximamente" — aún sin modelo asignado.
+- Estilos de estado en `culturaxr.css`: `.badge`, `.card--activa`, `.card.locked`,
+  `.btn-invoke.is-disabled`, animación `shake-soft`.
+- Firma sonora `piramide()` y tono `denied()` para invocaciones no disponibles.
+
+### Notas
+- `culturaxr.html` queda como referencia; la landing servida por Vite es `index.html`.
+- Se conserva el `<script>` de MediaPipe Hands por CDN (lo usa `HandOverlay` vía `window.Hands`).
+
 ## [0.2.0] — 2026-07-11
 
 ### Agregado
