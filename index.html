@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <link rel="stylesheet" href="/culturaxr.css" />
+  <link rel="stylesheet" href="/estilo.css" />
   <!-- MediaPipe Hands: HandOverlay lo usa vía window.Hands. No quitar. -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
@@ -25,53 +25,82 @@
 
   <!-- ═══ HEADER ═══ -->
   <header class="cx-header">
-    <p class="header_eyebrow">Joya de Cerén · Patrimonio UNESCO · El Salvador</p>
-    <h1 class="header_titulo">CULTURA<span class="accent">XR</span></h1>
-    <p class="header_subtitulo">Una plataforma de realidad aumentada que transforma la forma en que turistas nacionales e internacionales descubren la riqueza cultural de El Salvador: experiencias inmersivas que conectan historia, patrimonio y tecnología en un solo recorrido.</p>
+    <p class="header_eyebrow">
+        Sitios Arqueológicos y Culturales de El Salvador
+    </p>
+
+    <!-- Logo de CulturaXR -->
+    <a href="index.html" class="header_logo" aria-label="CulturaXR - Inicio">
+        <img src="/img/log.svg" alt="Logo CulturaXR" class="logo">
+    </a>
+
+    <p class="header_subtitulo">
+        Una plataforma de realidad aumentada que transforma la forma en que turistas nacionales e internacionales descubren la riqueza cultural de El Salvador: experiencias inmersivas que conectan historia, patrimonio y tecnología en un solo recorrido.
+    </p>
 
     <nav class="cx-nav">
-      <button class="cx-nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu">
-        ☰ Menú
-      </button>
-      <ul class="cx-nav__lista" id="nav-menu">
-        <li><a class="cx-nav__link" href="index.html">Inicio</a></li>
-        <li><a class="cx-nav__link" href="#invocaciones">Invocaciones</a></li>
-        <li><a class="cx-nav__link" href="#info-sitio">Acerca de</a></li>
-      </ul>
+        <button
+            class="cx-nav__toggle"
+            id="nav-toggle"
+            aria-expanded="false"
+            aria-controls="nav-menu">
+            ☰ Menú
+        </button>
+
+        <ul class="cx-nav__lista" id="nav-menu">
+            <li><a class="cx-nav__link" href="index.html">Inicio</a></li>
+            <li><a class="cx-nav__link" href="#invocaciones">Invocaciones</a></li>
+            <li><a class="cx-nav__link" href="#info-sitio">Acerca de</a></li>
+        </ul>
     </nav>
-  </header>
+</header>
 
   <div class="sep"></div>
 
   <!-- ═══ HERO ═══ -->
   <section class="hero reveal">
-    <h2 class="hero_titulo">Joya de Cerén</h2>
-    <p class="hero_subtitulo">Patrimonio de la Humanidad</p>
-    <p class="hero_texto">La "Pompeya de América": una aldea maya sepultada por ceniza volcánica hace más de 1,400 años, preservada casi intacta.</p>
+    <h2 class="hero_titulo">Vive el Patrimonio de El Salvador en Realidad Aumentada</h2>
+    <p class="hero_subtitulo">Experiencias inmersivas en los sitios más importantes del patrimonio salvadoreño</p>
+    <p class="hero_texto">Explora los tesoros del patrimonio salvadoreño a través de experiencias inmersivas en realidad aumentada. 
+    Historia, arqueología y cultura cobrando vida frente a tus ojos.</p>
   </section>
 
-  <!-- ═══ GALERÍA ═══ -->
+  <!-- ═══ GALERÍA ═══
+       Fotos: Wikimedia Commons (Joya de Cerén, pirámide y Salvador del Mundo);
+       la trompeta es un render de nuestro propio modelo 3D. -->
   <section class="galeria-wrapper reveal">
-    <h3 class="seccion-titulo">Recorré el sitio</h3>
+    <h3 class="seccion-titulo">Recorré nuestros sitios</h3>
     <div class="galeria">
       <div class="galeria_item">
-        <img src="img/3.jpg" alt="Entrada al sitio arqueológico" class="galeria_imagen">
-        <p class="galeria_descripcion">Descubre un Patrimonio de la Humanidad. Vive una experiencia inmersiva en la Joya de Cerén, donde la realidad aumentada revela la historia, la cultura y la vida cotidiana de una antigua comunidad maya.</p>
+        <img src="img/joya-ceren-vista.jpg" alt="Estructuras de adobe del sitio arqueológico Joya de Cerén" class="galeria_imagen">
+        <p class="galeria_descripcion">La "Pompeya de América": una aldea maya sepultada por la ceniza del volcán Loma Caldera hacia el año 600 d.C. La erupción preservó intactas sus casas de adobe, sus utensilios y hasta los alimentos.</p>
       </div>
       <div class="galeria_item">
-        <img src="img/2.jfif" alt="Pieza encontrada" class="galeria_imagen">
-        <p class="galeria_descripcion">Conecta con el legado de nuestros antepasados. Explora piezas arqueológicas, reliquias y objetos históricos mediante una experiencia interactiva que hace cada visita más educativa e inolvidable.</p>
+        <img src="img/joya-ceren-temazcal.jpg" alt="Temazcal o baño de vapor ceremonial en Joya de Cerén" class="galeria_imagen">
+        <p class="galeria_descripcion">El temazcal, baño de vapor ceremonial con su cúpula de barro intacta. Una estructura única en Mesoamérica que revela las prácticas de higiene y ritual de la vida cotidiana maya.</p>
       </div>
       <div class="galeria_item">
-        <img src="img/1.jpg" alt="Monumentos enterrados encontrados con el tiempo" class="galeria_imagen">
-        <p class="galeria_descripcion">Transformamos la manera de descubrir el patrimonio cultural de El Salvador: reconstrucciones digitales, historia interactiva y recorridos inmersivos que conectan tecnología, cultura y turismo.</p>
+        <img src="img/joya-ceren-estructura.jpg" alt="Muro de adobe conservado bajo la ceniza volcánica en Joya de Cerén" class="galeria_imagen">
+        <p class="galeria_descripcion">Muros de bahareque y adobe que sobrevivieron más de 1,400 años bajo la ceniza. Cada estructura muestra cómo vivía, cocinaba y trabajaba una comunidad campesina maya, no solo sus templos.</p>
+      </div>
+      <div class="galeria_item">
+        <img src="img/piramide-san-andres.jpg" alt="Pirámide de San Andrés, sitio arqueológico en el valle de Zapotitán" class="galeria_imagen">
+        <p class="galeria_descripcion">La Pirámide de San Andrés, corazón ceremonial del valle de Zapotitán. Invocala en realidad aumentada y recorré la acrópolis desde donde los gobernantes mayas dirigían toda la región.</p>
+      </div>
+      <div class="galeria_item">
+        <img src="img/salvador-del-mundo.jpg" alt="Monumento al Divino Salvador del Mundo, San Salvador" class="galeria_imagen">
+        <p class="galeria_descripcion">El Salvador del Mundo, símbolo de la identidad salvadoreña en plena capital. Traelo a tu espacio con realidad aumentada y descubrí la historia del monumento más querido del país.</p>
+      </div>
+      <div class="galeria_item">
+        <img src="img/trompeta.jfif" alt="Trompeta de barro prehispánica, render del modelo 3D" class="galeria_imagen">
+        <p class="galeria_descripcion">La trompeta de barro, instrumento ceremonial prehispánico hallado en sitios como Tazumal y Quelepa. Este render de nuestro modelo 3D es la misma pieza que podés invocar con un gesto.</p>
       </div>
     </div>
   </section>
 
   <!-- ═══ MAPA ═══ -->
   <section class="mapa-wrapper reveal">
-    <h3 class="seccion-titulo">Explorá el sitio</h3>
+    <h3 class="seccion-titulo">Explorá los sitios en las siguientes Ubicaciones</h3>
     <div id="mapa" class="mapa"></div>
   </section>
 
@@ -202,8 +231,9 @@
   <!-- ═══ INFO DEL SITIO ═══ -->
   <section class="sitio reveal" id="info-sitio">
     <article class="sitio_dato">
-      <h3 class="sitio_dato-titulo">¿Qué podremos encontrar acá?</h3>
-      <p class="sitio_dato-texto">Es el único sitio arqueológico de Latinoamérica declarado Patrimonio de la Humanidad por preservar la vida cotidiana maya, no solo templos.</p>
+      <h3 class="sitio_dato-titulo">El patrimonio de El Salvador en tus manos</h3>
+      <p class="sitio_dato-texto">Recorre sitios arqueológicos, monumentos nacionales y piezas históricas con tecnología de realidad aumentada. 
+    Una forma nueva y emocionante de conectar con nuestra rica cultura.</p>
     </article>
   </section>
 
@@ -418,30 +448,126 @@ const observador = new IntersectionObserver((entradas) => {
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => observador.observe(el));
 
-/* ═══ MAPA — MapLibre ═══ */
+/* ═══ MAPA — MapLibre ═══
+   Estilo nocturno (CARTO Dark Matter) a juego con la landing.
+   Vista inicial: todo El Salvador desde lo alto. El visitante puede
+   moverlo y acercarlo; al dejar de usarlo, el mapa regresa solo
+   a la vista del país. */
 const mapa = new maplibregl.Map({
   container: 'mapa',
-  style: 'https://tiles.openfreemap.org/styles/liberty',
-  center: [-89.3606, 13.8236],
-  zoom: 15
+  style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+  center: [-88.90, 13.79],
+  zoom: 7,
+  pitch: 0,
+  bearing: 0
 });
 
-const marcadores = [
-  { nombre: 'Pirámide de San Andrés', coords: [-89.3606, 13.8236], id: 'piramide' },
+mapa.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+/* La rueda del mouse sigue haciendo scroll en la página, no zoom en el mapa.
+   Acercar: botones +/−, doble clic, o pellizco en táctil. Mover: arrastrar. */
+mapa.scrollZoom.disable();
+mapa.dragRotate.disable();
+mapa.touchZoomRotate.disableRotation();
+
+/* ── Ubicaciones ── */
+const UBICACIONES = [
+  {
+    id: 'joya-de-ceren',
+    coords: [-89.3562386, 13.8279206], // https://maps.app.goo.gl/5fhKcSpXiEJYn2iL6
+    titulo: 'Sitio Arqueológico Joya de Cerén',
+    detalle: 'Patrimonio de la Humanidad UNESCO, San Juan Opico'
+  },
+  {
+    id: 'piramide',
+    coords: [-89.389169, 13.800599],   // https://maps.app.goo.gl/FryFZJPNJ35iRtuP7
+    titulo: 'Pirámide de San Andrés',
+    detalle: 'Parque Arqueológico San Andrés'
+  },
+  {
+    id: 'salvador-del-mundo',
+    coords: [-89.2244333, 13.7012837], // https://maps.app.goo.gl/6QqC5ZVrJWo7zBsq5
+    titulo: 'Salvador del Mundo',
+    detalle: 'Plaza Salvador del Mundo, San Salvador'
+  },
+  {
+    id: 'trompeta-tazumal',
+    coords: [-89.6741595, 13.9795908], // https://maps.app.goo.gl/GEJvPb4JDsnCm1ix6
+    titulo: 'Trompeta de Barro',
+    detalle: 'Parque Arqueológico Tazumal, Chalchuapa'
+  },
+  {
+    id: 'trompeta-quelepa',
+    coords: [-88.2334408, 13.519463], // https://maps.app.goo.gl/6atGFKoNNWsB9mYW9
+    titulo: 'Trompeta de Barro',
+    detalle: 'Sitio Arqueológico Quelepa, San Miguel'
+  },
+  {
+    id: 'trompeta-muna',
+    coords: [-89.2387472, 13.6871417], // https://maps.app.goo.gl/HDdd6qtZe1QKy9PS8
+    titulo: 'Trompeta de Barro',
+    detalle: 'Museo Nacional de Antropología (MUNA), San Salvador'
+  }
 ];
 
-marcadores.forEach((m) => {
-  const el = document.createElement('button');
-  el.className = 'marcador-personaje';
-  el.textContent = '📍';
-  el.setAttribute('data-personaje', m.id);
-  el.setAttribute('aria-label', m.nombre);
+UBICACIONES.forEach((sitio) => {
+  const el = document.createElement('div');
+  el.className = 'marcador-sitio';
+  el.setAttribute('role', 'img');
+  el.setAttribute('aria-label', sitio.titulo);
 
-  new maplibregl.Marker({ element: el })
-    .setLngLat(m.coords)
-    .setPopup(new maplibregl.Popup().setText(m.nombre))
+  new maplibregl.Marker({ element: el, anchor: 'center' })
+    .setLngLat(sitio.coords)
+    .setPopup(new maplibregl.Popup({ offset: 20, closeButton: false }).setHTML(
+      `<strong>${sitio.titulo}</strong><br>${sitio.detalle}`
+    ))
     .addTo(mapa);
 });
+
+/* ── Vista país: encuadre de todo El Salvador, cámara cenital ──
+   Se calcula la cámara de forma síncrona (no depende de eventos
+   del mapa) y se usa como posición inicial y de regreso. */
+const LIMITES_EL_SALVADOR = [[-90.20, 13.10], [-87.62, 14.48]];
+
+const camaraPais = mapa.cameraForBounds(LIMITES_EL_SALVADOR, { padding: 24 });
+const vistaPais = { center: camaraPais.center, zoom: camaraPais.zoom };
+mapa.jumpTo({ ...vistaPais, pitch: 0, bearing: 0 });
+
+/* ── Regreso automático tras 7 s sin interacción ── */
+const ESPERA_REGRESO_MS = 1000;
+let temporizadorRegreso = null;
+let regresando = false;
+
+function estaEnVistaPais() {
+  if (!vistaPais) return true;
+  const c = mapa.getCenter();
+  return Math.abs(mapa.getZoom() - vistaPais.zoom) < 0.05 &&
+         Math.abs(c.lng - vistaPais.center.lng) < 0.01 &&
+         Math.abs(c.lat - vistaPais.center.lat) < 0.01;
+}
+
+function volverAVistaPais() {
+  if (!vistaPais || estaEnVistaPais()) return;
+  regresando = true;
+  mapa.easeTo({
+    center: vistaPais.center,
+    zoom: vistaPais.zoom,
+    pitch: 0,
+    bearing: 0,
+    duration: 2600,
+    essential: true
+  });
+  mapa.once('moveend', () => { regresando = false; });
+}
+
+function reiniciarTemporizador() {
+  if (regresando) return;       // el regreso automático no cuenta como interacción
+  clearTimeout(temporizadorRegreso);
+  temporizadorRegreso = setTimeout(volverAVistaPais, ESPERA_REGRESO_MS);
+}
+
+['movestart', 'moveend', 'zoomstart', 'zoomend', 'dragstart', 'dragend']
+  .forEach(ev => mapa.on(ev, reiniciarTemporizador));
 
 /* ═══ INTERACCIÓN — INVOCACIÓN ═══
    Las tarjetas con [data-model-id] son detectadas por React (src/App.tsx),
