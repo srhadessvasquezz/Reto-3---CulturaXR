@@ -21,12 +21,136 @@
   box-sizing: border-box;
 }
 
+/* La landing (index.html + estilo.css) es la página scrolleable; la experiencia
+   inmersiva se monta en #root como overlay fixed, así que #root no reserva espacio. */
 html,
-body,
+body {
+  width: 100%;
+}
+
 #root {
   width: 100%;
+}
+
+.immersive-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+.immersive-viewer {
+  width: 100%;
   height: 100%;
-  overflow: hidden;
+}
+
+/* Botones de acción de la experiencia: arriba a la derecha, sobre todo lo demás */
+.immersive-actions {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.immersive-btn {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.1rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.immersive-btn:hover {
+  background: rgba(0, 0, 0, 0.95);
+  border-color: #fff;
+}
+
+/* Panel "Ver información": entra desde la izquierda, por encima del video
+   y el canvas 3D (z 1-10) pero debajo de los botones de acción (z 30). */
+.info-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(380px, 90vw);
+  z-index: 25;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: 3rem 1.5rem 1.5rem;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: transform 250ms ease, opacity 250ms ease;
+}
+
+.info-panel--open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.info-panel__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.info-panel__close:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+.info-panel__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 0.25rem;
+}
+
+.info-panel__subtitle {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.info-panel__text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  margin-bottom: 0.85rem;
+}
+
+.info-panel__footer {
+  margin-top: 1.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
 }
 
 body {
@@ -200,9 +324,21 @@ body {
 }
 
 .model-viewer {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+  animation: model-appear 900ms ease-out both;
+}
+
+/* Aparición suave del modelo al cargar (y al reiniciar posición, que
+   remonta el visor). Discreta, sin efectos llamativos. */
+@keyframes model-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .model-viewer canvas {
@@ -233,6 +369,120 @@ body {
   font-size: 0.85rem;
   color: var(--color-text-muted);
   line-height: 1.5;
+}
+
+.camera-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.camera-selector__label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.camera-selector__select {
+  background: var(--color-card);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  max-width: 220px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.camera-selector__select:hover,
+.camera-selector__select:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.camera-feed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-feed--mirrored {
+  transform: scaleX(-1);
+}
+
+.hand-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Monitor de gestos: bajo la barra de acciones, esquina superior derecha.
+   Usa la paleta del equipo (estilo.css :root) con fallback a los hex del spec. */
+.gesture-monitor {
+  position: absolute;
+  top: 4.2rem;
+  right: 1rem;
+  z-index: 30;
+  width: 160px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--color-arena-100, #f5ede0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  font-family: var(--font-titulos, 'Poppins', sans-serif);
+  transition: background 0.2s;
+}
+
+.gesture-monitor__command {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-anil-900, #1a3a52);
+}
+
+.gesture-monitor__status {
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 400;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.gesture-monitor__status--frozen {
+  color: #e67e22;
+  font-weight: 700;
+}
+
+.viewer-status {
+  position: absolute;
+  /* debajo del monitor de gestos para no superponerse */
+  top: 8.5rem;
+  right: 1rem;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  max-width: 260px;
+  line-height: 1.4;
+}
+
+.viewer-status--error {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.4);
 }
 
 @media (max-width: 768px) {
@@ -269,4 +519,98 @@ body {
     left: 1rem;
     right: 1rem;
   }
+
+  .camera-selector__select {
+    max-width: 140px;
+  }
+}
+
+/* =========================================================
+   MARCO TEMÁTICO (greca precolombina) — borde permanente
+   Color principal Añil, detalles decorativos Arena. Fino
+   para no reducir el área útil de la cámara. Decorativo.
+   ========================================================= */
+.immersive-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 23;
+  pointer-events: none;
+  opacity: 0;
+  animation: frame-fade-in 700ms ease-out forwards;
+}
+@keyframes frame-fade-in { to { opacity: 1; } }
+
+/* Bandas de greca escalonada (azteca): franja Añil sólida con meandro Arena
+   que se repite a lo largo de cada lado. Grueso y decorativo. */
+.immersive-frame__band {
+  position: absolute;
+}
+
+/* Tile horizontal (para arriba/abajo): banda Añil + meandro Arena, período 24. */
+.immersive-frame__band--top,
+.immersive-frame__band--bottom {
+  left: 0;
+  right: 0;
+  height: 26px;
+  background: repeat-x
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26' preserveAspectRatio='none'%3E%3Crect width='24' height='26' fill='%231a3a52'/%3E%3Cpath d='M0,19 V7 H12 V19 H24' fill='none' stroke='%23f5ede0' stroke-width='2.2'/%3E%3Cline x1='0' y1='23' x2='24' y2='23' stroke='%23f5ede0' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-size: 32px 100%;
+}
+.immersive-frame__band--top { top: 0; }
+.immersive-frame__band--bottom { bottom: 0; transform: scaleY(-1); }
+
+/* Tile vertical (para izquierda/derecha): entre las bandas superior e inferior. */
+.immersive-frame__band--left,
+.immersive-frame__band--right {
+  top: 26px;
+  bottom: 26px;
+  width: 26px;
+  background: repeat-y
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 24' preserveAspectRatio='none'%3E%3Crect width='26' height='24' fill='%231a3a52'/%3E%3Cpath d='M19,0 V12 H7 V24' fill='none' stroke='%23f5ede0' stroke-width='2.2'/%3E%3Cline x1='23' y1='0' x2='23' y2='24' stroke='%23f5ede0' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-size: 100% 32px;
+}
+.immersive-frame__band--left { left: 0; }
+.immersive-frame__band--right { right: 0; transform: scaleX(-1); }
+
+/* =========================================================
+   OVERLAY SUPERIOR IZQUIERDA — nombre del sitio + ubicación
+   ========================================================= */
+.site-overlay {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  z-index: 24;
+  max-width: 60%;
+  padding: 0.5rem 0.9rem;
+  background: rgba(26, 58, 82, 0.72);
+  border: 1px solid rgba(245, 237, 224, 0.5);
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  animation: site-overlay-in 600ms ease-out 0.15s forwards;
+}
+@keyframes site-overlay-in { to { opacity: 1; } }
+
+.site-overlay__name {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.2;
+  color: #f5ede0;
+}
+.site-overlay__location {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  margin-top: 0.15rem;
+  color: rgba(245, 237, 224, 0.8);
+}
+
+@media (max-width: 768px) {
+  .immersive-frame__band--top,
+  .immersive-frame__band--bottom { height: 18px; }
+  .immersive-frame__band--left,
+  .immersive-frame__band--right { width: 18px; top: 18px; bottom: 18px; }
+  .site-overlay { max-width: 70%; }
+  .site-overlay__name { font-size: 0.9rem; }
 }

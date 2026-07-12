@@ -1,0 +1,62 @@
+/* Flujo de captura: countdown + flash + preview. Todas las capas van dentro
+   del stacking context de .immersive-overlay (z-index:1000), con z-index alto
+   para quedar por encima de .immersive-actions (30) y .viewer-status (20). */
+
+/* Cuenta regresiva: número grande centrado sobre cualquier fondo. */
+.capture-countdown {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 120px;
+  line-height: 1;
+  color: #f5ede0;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.45);
+}
+
+/* Flash blanco: cubre todo y se desvanece en 200ms. */
+.capture-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 2001;
+  background: #ffffff;
+  pointer-events: none;
+  animation: capture-flash-fade 200ms ease-out forwards;
+}
+
+@keyframes capture-flash-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Vista previa: imagen capturada + acciones. */
+.capture-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.capture-preview__image {
+  max-width: 90vw;
+  max-height: 70vh;
+  object-fit: contain;
+  border: 2px solid #f5ede0;
+  border-radius: 8px;
+}
+
+.capture-preview__actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" fill="none">
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&amp;display=swap');</style>
+  </defs>
+
+  <!-- Fondo negro sólido -->
+  <rect width="1000" height="720" fill="#0e1013"/>
+
+  <!-- ═══ LOGO 1 — isotipo principal (grande, arriba) ═══
+       Mismas formas, colores y detalles que img/logo1.svg
+       Escala 4.0 → ~288 px, centrado en x=500 -->
+  <g transform="translate(300,50) scale(4.0)">
+    <path d="M50 14 L86 50 L50 86 L14 50 Z" stroke="#e9e7e0" stroke-width="3.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+    <path d="M50 14 L50 86 M14 50 L86 50" stroke="#e9e7e0" stroke-width="2" vector-effect="non-scaling-stroke" opacity="0.45"/>
+    <circle cx="50" cy="14" r="4" fill="#e8a33d"/>
+    <circle cx="86" cy="50" r="4" fill="#e8a33d"/>
+    <circle cx="50" cy="86" r="4" fill="#e8a33d"/>
+    <circle cx="14" cy="50" r="4" fill="#e8a33d"/>
+    <circle cx="50" cy="50" r="5.5" fill="#e9e7e0"/>
+  </g>
+
+  <!-- ═══ LOGO 2 — lockup SivAR (pequeño, abajo) ═══
+       Misma tipografía (Space Grotesk) y estructura que img/logo2.svg,
+       en su variante clara para leer sobre negro (como la referencia).
+       Escala 0.61 → ~210 px de ancho, centrado en x=500 -->
+  <g transform="translate(380.5,537.5) scale(0.61)">
+    <g transform="translate(15,20)">
+      <path d="M50 14 L86 50 L50 86 L14 50 Z" stroke="#e9e7e0" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M50 14 L50 86 M14 50 L86 50" stroke="#e9e7e0" stroke-width="1.5" opacity="0.45"/>
+      <circle cx="50" cy="14" r="4" fill="#e8a33d"/>
+      <circle cx="86" cy="50" r="4" fill="#e8a33d"/>
+      <circle cx="50" cy="86" r="4" fill="#e8a33d"/>
+      <circle cx="14" cy="50" r="4" fill="#e8a33d"/>
+      <circle cx="50" cy="50" r="5.5" fill="#e9e7e0"/>
+    </g>
+    <text x="145" y="100" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="76" fill="#e9e7e0">Siv<tspan fill="#e8a33d">AR</tspan></text>
+  </g>
+</svg>
