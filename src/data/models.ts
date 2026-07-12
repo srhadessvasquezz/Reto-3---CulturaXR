@@ -20,6 +20,35 @@ const MODELS: Model3DDetail[] = [
     category: "arqueología",
     thumbnail: null,
   },
+  {
+    id: "macuahuitl",
+    name: "Macuahuitl",
+    description:
+      "Garrote-espada mesoamericano de madera con filos de obsidiana, arma principal de los guerreros nahuas y pipiles.",
+    // El archivo no lleva espacios; la ruta va tal cual.
+    file: "/3d_models/Macuahuitl.glb",
+    category: "arma",
+    thumbnail: null,
+  },
+  {
+    id: "salvador-del-mundo",
+    name: "Salvador del Mundo",
+    description:
+      "Monumento al Divino Salvador del Mundo: la figura de Cristo sobre el globo terráqueo, ícono nacional de El Salvador.",
+    // Los espacios del nombre van URL-encoded (%20) para que el loader los sirva.
+    file: "/3d_models/Salvador%20del%20mundo.glb",
+    category: "monumento",
+    thumbnail: null,
+  },
+  {
+    id: "trompeta-de-barro",
+    name: "Trompeta de Barro",
+    description:
+      "Instrumento de viento de cerámica usado en ceremonias por las culturas precolombinas del actual El Salvador.",
+    file: "/3d_models/trompeta%20de%20barro.glb",
+    category: "instrumento",
+    thumbnail: null,
+  },
 ];
 
 export function getModels(): Model3D[] {

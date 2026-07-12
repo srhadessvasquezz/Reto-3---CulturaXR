@@ -1,5 +1,23 @@
 # Registro de Cambios
 
+## [0.4.0] — 2026-07-12
+
+### Agregado
+- **3 modelos 3D nuevos** (merge de `origin/main`): `Macuahuitl.glb`,
+  `Salvador del mundo.glb`, `trompeta de barro.glb` en `public/3d_models/`.
+- Registro de los 3 modelos en `src/data/models.ts` (con rutas URL-encoded
+  para los nombres con espacios) y fichas completas en `src/data/modelInfo.ts`.
+- Las 3 tarjetas antes "Próximamente" ahora son invocaciones **activas**,
+  cada una con su icono SVG, categoría e información propias:
+  - **Macuahuitl** — arma de guerra mesoamericana (obsidiana).
+  - **Salvador del Mundo** — monumento nacional de El Salvador.
+  - **Trompeta de Barro** — instrumento ritual precolombino.
+
+### Notas
+- Cada modelo abre la experiencia inmersiva vía `data-model-id`; la info del
+  visor y del panel "Ver información" se genera según el `id` del modelo.
+- Verificado: los 4 `.glb` se sirven (200) y son glTF 2.0 válidos; type-check limpio.
+
 ## [0.3.0] — 2026-07-12
 
 ### Cambiado
