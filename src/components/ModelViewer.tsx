@@ -1,13 +1,32 @@
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, ContactShadows, Environment } from '@react-three/drei';
+import { Box3, Vector3 } from 'three';
 import type { Group } from 'three';
 import type { Model3DDetail } from '../hooks/useModels';
 import type { GestureData } from '../types';
 
+const TARGET_SIZE = 3;
+
 function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  return <primitive object={scene} scale={1} />;
+
+  // Los .glb llegan con tamaño y pivote arbitrarios: se centra la geometría
+  // en el origen y se normaliza a TARGET_SIZE para que las rotaciones
+  // (mouse y gestos) giren sobre el centro visual del modelo.
+  const { offset, scale } = useMemo(() => {
+    const box = new Box3().setFromObject(scene);
+    const center = box.getCenter(new Vector3());
+    const size = box.getSize(new Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    return { offset: center.negate(), scale: TARGET_SIZE / maxDim };
+  }, [scene]);
+
+  return (
+    <group scale={scale}>
+      <primitive object={scene} position={offset} />
+    </group>
+  );
 }
 
 function Placeholder() {
@@ -69,7 +88,11 @@ function GestureControl({
         const dy = h.sy - prev.current.sy;
         if (groupRef.current) {
           groupRef.current.rotation.y += dx * 0.005;
-          groupRef.current.rotation.x += dy * 0.005;
+          // Se limita la inclinación a ±60° para que un gesto no deje el modelo boca abajo
+          groupRef.current.rotation.x = Math.max(
+            -Math.PI / 3,
+            Math.min(Math.PI / 3, groupRef.current.rotation.x + dy * 0.005),
+          );
         }
       }
       prev.current = { sx: h.sx, sy: h.sy, active: true };
