@@ -49,16 +49,18 @@ interface HandOverlayProps {
 }
 
 export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayProps) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const onGestureRef = useRef(onGesture);
+  onGestureRef.current = onGesture;
 
   useEffect(() => {
+    if (!stream) return;
+
     const hidden = document.createElement('video');
     hidden.setAttribute('playsinline', '');
     hidden.muted = true;
     hidden.srcObject = stream;
-    videoRef.current = hidden;
-    hidden.play();
+    hidden.play().catch(() => {});
 
     return () => {
       hidden.srcObject = null;
@@ -70,7 +72,6 @@ export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayP
     const canvas = canvasRef.current;
     if (!canvas || !stream) return;
 
-    const $video = videoRef.current!;
     const $canvas = canvas;
     const $ctx = canvas.getContext('2d')!;
     let handsInstance: any = null;
@@ -90,10 +91,20 @@ export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayP
       const ready = await waitForHands();
       if (!ready || !running) return;
 
-      await $video.play();
+      const hidden = document.createElement('video');
+      hidden.setAttribute('playsinline', '');
+      hidden.muted = true;
+      hidden.srcObject = stream;
 
-      const vw = $video.videoWidth || 640;
-      const vh = $video.videoHeight || 480;
+      try {
+        await hidden.play();
+      } catch {
+        hidden.remove();
+        if (!running) return;
+      }
+
+      const vw = hidden.videoWidth || 640;
+      const vh = hidden.videoHeight || 480;
 
       const parent = $canvas.parentElement!;
       $canvas.width = parent.clientWidth;
@@ -155,15 +166,15 @@ export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayP
           }
         }
 
-        onGesture?.(gesture);
+        onGestureRef.current?.(gesture);
       });
 
       let busy = false;
       async function tick() {
         if (!running) return;
-        if (!busy && $video.readyState >= 2) {
+        if (!busy && hidden.readyState >= 2) {
           busy = true;
-          try { await handsInstance.send({ image: $video }); } catch {}
+          try { await handsInstance.send({ image: hidden }); } catch {}
           busy = false;
         }
         animationId = requestAnimationFrame(tick);
@@ -180,14 +191,9 @@ export function HandOverlay({ stream, mirrored = true, onGesture }: HandOverlayP
       if (handsInstance) handsInstance.close();
       $ctx.clearRect(0, 0, $canvas.width, $canvas.height);
     };
-  }, [stream, mirrored, onGesture]);
+  }, [stream, mirrored]);
 
   if (!stream) return null;
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="hand-overlay"
-    />
-  );
+  return <canvas ref={canvasRef} className="hand-overlay" />;
 }
