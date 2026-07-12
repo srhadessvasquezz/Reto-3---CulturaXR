@@ -144,7 +144,7 @@ export function classifyGesture(
       case 1: return sticky('SHOW_INFO', previousCommand);
       case 2: return sticky('NEXT_MODEL', previousCommand);
       case 3: return sticky('PREVIOUS_MODEL', previousCommand);
-      case 4: return sticky('MENU_TOGGLE', previousCommand);
+      case 4: return sticky('TAKE_PHOTO', previousCommand);
       default: return sticky('NONE', previousCommand);
     }
   }

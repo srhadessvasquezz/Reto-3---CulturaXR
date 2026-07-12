@@ -1,0 +1,74 @@
+/* Menú de acciones: panel Añil con botones Arena. Estética del sistema. */
+
+.action-menu-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  animation: action-menu-backdrop-in 180ms ease-out;
+}
+.action-menu-backdrop--closing {
+  animation: action-menu-backdrop-out 200ms ease-in forwards;
+}
+@keyframes action-menu-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes action-menu-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
+
+.action-menu {
+  min-width: 240px;
+  background: #1a3a52;
+  border: 1px solid #f5ede0;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: action-menu-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.action-menu--closing {
+  animation: action-menu-out 200ms ease-in forwards;
+}
+@keyframes action-menu-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes action-menu-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(8px) scale(0.96); }
+}
+
+.action-menu__title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f5ede0;
+  opacity: 0.8;
+  text-align: center;
+  margin-bottom: 0.2rem;
+}
+
+.action-menu__item {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1a3a52;
+  background: #f5ede0;
+  border: 1px solid #f5ede0;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.15s, background 0.15s;
+}
+.action-menu__item:hover {
+  box-shadow: 0 0 20px rgba(245, 237, 224, 0.35);
+  transform: translateY(-1px);
+}
+.action-menu__item:active {
+  transform: scale(0.98);
+}

@@ -4,7 +4,8 @@ export type GestureCommand =
   | 'SHOW_INFO'
   | 'NEXT_MODEL'
   | 'PREVIOUS_MODEL'
-  | 'MENU_TOGGLE';
+  | 'MENU_TOGGLE'
+  | 'TAKE_PHOTO';
 
 export interface PinchInfo {
   active: boolean;
