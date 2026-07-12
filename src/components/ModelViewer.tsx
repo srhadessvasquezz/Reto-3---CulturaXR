@@ -1,43 +1,37 @@
 import { Suspense, useEffect, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, ContactShadows, Environment } from '@react-three/drei';
-import { Box3, Vector3, type Group } from 'three';
+import { Box3, Vector3, type Group, type Mesh, type Object3D } from 'three';
 import type { Model3DDetail } from '../hooks/useModels';
 import type { GestureData } from '../types';
 
 function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  const meshRef = useRef<Group>(null);
-  const centered = useRef(false);
 
   useEffect(() => {
-    if (centered.current) return;
-    const root = meshRef.current;
-    if (!root) return;
-
-    root.updateWorldMatrix(true, false);
-    const box = new Box3().setFromObject(root);
+    const box = new Box3().setFromObject(scene);
     const center = new Vector3();
     box.getCenter(center);
     const size = new Vector3();
     box.getSize(size);
 
-    root.position.sub(center);
+    scene.traverse((child: Object3D) => {
+      const mesh = child as Mesh;
+      if (mesh.isMesh && mesh.geometry) {
+        mesh.geometry.translate(-center.x, -center.y, -center.z);
+      }
+    });
+
+    scene.position.set(0, 0, 0);
 
     const maxDim = Math.max(size.x, size.y, size.z);
     if (maxDim > 0) {
       const s = 2.5 / maxDim;
-      root.scale.setScalar(s);
+      scene.scale.setScalar(s);
     }
-
-    centered.current = true;
   }, [scene]);
 
-  return (
-    <group ref={meshRef}>
-      <primitive object={scene} />
-    </group>
-  );
+  return <primitive object={scene} />;
 }
 
 function Placeholder() {
