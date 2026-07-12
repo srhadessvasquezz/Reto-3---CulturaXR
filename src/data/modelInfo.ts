@@ -20,17 +20,6 @@ export const MODEL_INFO: Record<string, ModelInfo> = {
     footer: "📍 Abierto al público · Parque Arqueológico San Andrés"
   },
 
-  macuahuitl: {
-    title: "Macuahuitl",
-    subtitle: "Arma de guerra mesoamericana",
-    paragraphs: [
-      "El macuahuitl era un garrote-espada de madera dura con hojas de obsidiana incrustadas a lo largo de sus filos. Fue el arma principal de los guerreros nahuas, y en el actual El Salvador la empuñaron los pipiles del señorío de Cuzcatlán.",
-      "La obsidiana, un vidrio volcánico afilado hasta el nivel del bisturí, permitía cortes devastadores en combate cuerpo a cuerpo, mientras que el cuerpo de madera podía también aturdir sin matar, útil para capturar prisioneros vivos.",
-      "Más que un arma, era un símbolo de estatus y valentía: su manejo formaba parte del entrenamiento y los ritos de iniciación guerrera de las élites mesoamericanas."
-    ],
-    footer: "⚔️ Cultura pipil-nahua · Señorío de Cuzcatlán"
-  },
-
   "salvador-del-mundo": {
     title: "Salvador del Mundo",
     subtitle: "San Salvador, El Salvador",
