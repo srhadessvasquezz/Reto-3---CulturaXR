@@ -1,32 +1,32 @@
-import { Suspense, useEffect, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, ContactShadows } from '@react-three/drei';
-import * as THREE from 'three';
+import { Box3, Vector3 } from 'three';
+import type { Group } from 'three';
 import type { Model3DDetail } from '../hooks/useModels';
 import type { GestureData } from '../types';
 
+const TARGET_SIZE = 3;
+
 function Model({ url }: { url: string }) {
   const { scene } = useGLTF(url);
-  const ref = useRef<THREE.Group>(null);
 
-  useEffect(() => {
-    if (!ref.current) return;
-
-    // Modelos .glb pueden venir en cualquier escala/origen. En vez de
-    // hardcodear scale/position (no hay forma de verlo antes de la demo),
-    // se auto-encuadra: mide el bounding box, lo reescala a ~3 unidades
-    // y lo centra en el origen.
-    const box = new THREE.Box3().setFromObject(ref.current);
-    const size = box.getSize(new THREE.Vector3());
+  // Los .glb llegan con tamaño y pivote arbitrarios: se centra la geometría
+  // en el origen y se normaliza a TARGET_SIZE para que las rotaciones
+  // (mouse y gestos) giren sobre el centro visual del modelo.
+  const { offset, scale } = useMemo(() => {
+    const box = new Box3().setFromObject(scene);
+    const center = box.getCenter(new Vector3());
+    const size = box.getSize(new Vector3());
     const maxDim = Math.max(size.x, size.y, size.z) || 1;
-    ref.current.scale.setScalar(3 / maxDim);
-
-    const scaledBox = new THREE.Box3().setFromObject(ref.current);
-    const center = scaledBox.getCenter(new THREE.Vector3());
-    ref.current.position.sub(center);
+    return { offset: center.negate(), scale: TARGET_SIZE / maxDim };
   }, [scene]);
 
-  return <primitive ref={ref} object={scene} rotation={[0, 0, 0]} />;
+  return (
+    <group scale={scale}>
+      <primitive object={scene} position={offset} />
+    </group>
+  );
 }
 
 function Placeholder() {
@@ -88,7 +88,11 @@ function GestureControl({
         const dy = h.sy - prev.current.sy;
         if (groupRef.current) {
           groupRef.current.rotation.y += dx * 0.005;
-          groupRef.current.rotation.x += dy * 0.005;
+          // Se limita la inclinación a ±60° para que un gesto no deje el modelo boca abajo
+          groupRef.current.rotation.x = Math.max(
+            -Math.PI / 3,
+            Math.min(Math.PI / 3, groupRef.current.rotation.x + dy * 0.005),
+          );
         }
       }
       prev.current = { sx: h.sx, sy: h.sy, active: true };

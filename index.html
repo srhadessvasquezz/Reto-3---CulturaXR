@@ -4,10 +4,35 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/estilo.css" />
     <title>Hackathon Turismo SV</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   </head>
   <body>
+    <header class="cx-header">
+      <h1 class="header_titulo">CulturaXR</h1>
+      <p class="header_subtitulo">Bienvenidos a **CulturaXR**, una plataforma de realidad aumentada que transforma la forma en que turistas nacionales e internacionales descubren la riqueza cultural de El Salvador, ofreciendo experiencias inmersivas que conectan la historia, el patrimonio y la tecnología en un solo recorrido.
+</p>
+    </header>
+    <section class="hero">
+      <h2 class="hero_titulo">Joya de Ceren</h2>
+      <p class="hero_subtitulo">Patrimonio de la Humanidad</p>
+      <p class="hero_texto">La "Pompeya de América": una aldea maya sepultada por ceniza volcánica
+      hace más de 1,400 años, preservada casi intacta.</p>
+    </section>
+    <section class="sitio" id="info-sitio">
+      <article class="sitio_dato">
+        <h3 class="sitio_dato-titulo">¿Qué podremos encontrar acá?</h3>
+        <p class="sitio_dato-texto">Es el único sitio arqueológico de Latinoamérica declarado Patrimonio
+        de la Humanidad por preservar la vida cotidiana maya, no solo templos.</p>
+      </article>
+    </section>
+    <section class="cta" id="cta-experiencia">
+      <p class="cta_texto">Activá la experiencia y descubrí sobre este lugar</p>
+      <button class="cx-boton cx-boton-primario" id="btn-iniciar-experiencia">
+        Iniciar experiencia
+      </button>
+    </section>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
