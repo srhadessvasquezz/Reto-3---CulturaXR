@@ -107,6 +107,7 @@ export function ImmersiveExperience({ modelId, onClose }: ImmersiveExperiencePro
         </div>
         <HandOverlay
           stream={camera.stream}
+          videoRef={videoRef}
           onGesture={(data) => {
             // isFrozen es autoridad de ModelViewer (lo escribe en la ref).
             // HandOverlay crea un objeto nuevo por frame, así que lo
