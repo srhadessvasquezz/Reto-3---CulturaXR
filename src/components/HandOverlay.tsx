@@ -47,17 +47,32 @@ function isPinching(lm: { x: number; y: number; z: number }[]): boolean {
 
 interface HandOverlayProps {
   stream: MediaStream | null;
-  videoRef: React.RefObject<HTMLVideoElement | null>;
+  videoRef?: React.RefObject<HTMLVideoElement | null>;
   mirrored?: boolean;
   onGesture?: (data: GestureData) => void;
 }
 
+/**
+ * HandOverlay
+ *
+ * Inicializa HandLandmarker (tasks-vision) con GPU delegate y modelo Full.
+ * Usa requestVideoFrameCallback para sincronizar inferencia con frames reales.
+ *
+ * Estrategia de video:
+ *  1. Si `videoRef` tiene un <video> montado (desde CameraFeed), lo reusa
+ *     para ahorrar un decodificador.
+ *  2. Si no, crea un <video> oculto propio como fallback.
+ *
+ * `onGesture` se estabiliza con useRef para que el efecto no se reinicie
+ * en cada render del padre (evita re-cargar WASM y modelo constantemente).
+ */
 export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: HandOverlayProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const onGestureRef = useRef(onGesture);
+  onGestureRef.current = onGesture;
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !stream) return;
+    if (!stream) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -67,18 +82,33 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
     let running = true;
     let callbackId: number | null = null;
 
-    // Estado clasificación persistente entre frames
+    // Estado de clasificación persistente entre frames
     let rawPrev: GestureCommand = 'NONE';
     let freezeFrames = 0;
     let freezeArmed = true;
 
-    // Dimensiones precalculadas (una vez, sin lecturas DOM en el bucle)
+    // Dimensiones precalculadas
     let cw = 0, ch = 0, rw = 0, rh = 0, ox = 0, oy = 0;
     let dimsReady = false;
 
+    // Video: usar el compartido o crear uno oculto
+    let videoEl = videoRef?.current ?? null;
+    let ownsVideo = false;
+
+    if (!videoEl) {
+      videoEl = document.createElement('video');
+      videoEl.setAttribute('playsinline', '');
+      videoEl.muted = true;
+      videoEl.srcObject = stream;
+      videoEl.style.display = 'none';
+      document.body.appendChild(videoEl);
+      ownsVideo = true;
+      videoEl.play();
+    }
+
     async function init() {
       const $canvas = canvas;
-      if (!$canvas) return;
+      if (!$canvas || !videoEl) return;
 
       try {
         const wasmBase = new URL('./mediapipe/wasm/', window.location.href).href;
@@ -101,10 +131,10 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
         return;
       }
 
-      if (!running || !video) return;
+      if (!running || !videoEl) return;
 
-      const vw = video.videoWidth || 640;
-      const vh = video.videoHeight || 480;
+      const vw = videoEl.videoWidth || 640;
+      const vh = videoEl.videoHeight || 480;
 
       const parent = $canvas.parentElement!;
       cw = parent.clientWidth;
@@ -123,19 +153,19 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
     }
 
     function scheduleFrame() {
-      if (!running || !video || !handLandmarker || !dimsReady) return;
+      if (!running || !videoEl || !handLandmarker || !dimsReady) return;
 
-      if (typeof video.requestVideoFrameCallback === 'function') {
-        callbackId = video.requestVideoFrameCallback(processFrame);
+      if (typeof videoEl.requestVideoFrameCallback === 'function') {
+        callbackId = videoEl.requestVideoFrameCallback(processFrame);
       } else {
         callbackId = window.setTimeout(() => processFrame(performance.now()), 0);
       }
     }
 
     function cancelFrame() {
-      if (callbackId === null || !video) return;
-      if (typeof video.cancelVideoFrameCallback === 'function') {
-        video.cancelVideoFrameCallback(callbackId);
+      if (callbackId === null || !videoEl) return;
+      if (typeof videoEl.cancelVideoFrameCallback === 'function') {
+        videoEl.cancelVideoFrameCallback(callbackId);
       } else {
         clearTimeout(callbackId);
       }
@@ -143,9 +173,9 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
     }
 
     function processFrame(now: DOMHighResTimeStamp) {
-      if (!running || !handLandmarker || !video) return;
+      if (!running || !handLandmarker || !videoEl) return;
 
-      const results = handLandmarker.detectForVideo(video, now);
+      const results = handLandmarker.detectForVideo(videoEl, now);
       ctx.clearRect(0, 0, cw, ch);
 
       const gesture: GestureData = {
@@ -194,7 +224,6 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
         }
       }
 
-      // Clasificación de comandos
       const raw = classifyGesture(hand1Lm, hand2Lm, rawPrev, hand1Label, hand2Label);
       rawPrev = raw;
 
@@ -218,21 +247,21 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
       gesture.hand2FingersExtended = hand2Lm ? countExtendedFingers(hand2Lm, hand2Label, 'hand2') : 0;
       gesture.commandConsumed = commandConsumed;
 
-      onGesture?.(gesture);
+      onGestureRef.current?.(gesture);
 
-      if (running && video.readyState >= 2) {
-        if (typeof video.requestVideoFrameCallback === 'function') {
-          callbackId = video.requestVideoFrameCallback(processFrame);
+      if (running && videoEl.readyState >= 2) {
+        if (typeof videoEl.requestVideoFrameCallback === 'function') {
+          callbackId = videoEl.requestVideoFrameCallback(processFrame);
         } else {
           callbackId = window.setTimeout(() => processFrame(performance.now()), 33);
         }
       }
     }
 
-    if (video.readyState >= 2) {
+    if (videoEl.readyState >= 2) {
       init();
     } else {
-      video.addEventListener('loadeddata', () => { if (running) init(); }, { once: true });
+      videoEl.addEventListener('loadeddata', () => { if (running) init(); }, { once: true });
     }
 
     return () => {
@@ -243,8 +272,12 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
         handLandmarker = null;
       }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (ownsVideo && videoEl) {
+        videoEl.srcObject = null;
+        videoEl.remove();
+      }
     };
-  }, [stream, videoRef, mirrored, onGesture]);
+  }, [stream, videoRef, mirrored]);
 
   if (!stream) return null;
 
