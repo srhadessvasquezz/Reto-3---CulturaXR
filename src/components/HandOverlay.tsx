@@ -114,7 +114,7 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
             delegate: 'CPU',
           },
           runningMode: 'VIDEO',
-          numHands: 1,
+          numHands: 2,
           minHandDetectionConfidence: 0.4,
           minHandPresenceConfidence: 0.4,
           minTrackingConfidence: 0.4,
