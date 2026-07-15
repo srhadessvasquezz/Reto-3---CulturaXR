@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 import type { GestureCommand, GestureData } from '../types';
-import { classifyGesture, countExtendedFingers, type Handedness } from '../utils/gestureDetectors';
+import { classifyGesture, type Handedness } from '../utils/gestureDetectors';
 
 const CONNECTIONS: [number, number][] = [
   [0, 1], [1, 2], [2, 3], [3, 4],
@@ -13,36 +13,42 @@ const CONNECTIONS: [number, number][] = [
 ];
 
 const COLORS: Record<string, string> = { Left: '#00FFFF', Right: '#FF6B6B' };
-const PINCH_THRESHOLD = 0.065;
+const PINCH_DIST_SQ = 0.065 * 0.065;
 const FREEZE_DEBOUNCE_FRAMES = 8;
+const FINGER_TIPS = [4, 8, 12, 16, 20];
 
-function drawHand(
-  ctx: CanvasRenderingContext2D,
-  pts: { x: number; y: number }[],
-  color: string,
-) {
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
-  ctx.globalAlpha = 0.7;
-  for (const [i, j] of CONNECTIONS) {
-    const a = pts[i], b = pts[j];
-    if (!a || !b) continue;
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
-  }
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = color;
-  for (const p of pts) {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-    ctx.fill();
-  }
+// Buffer reutilizable para coordenadas proyectadas (evita alloc por frame)
+const scratch: { x: number; y: number }[][] = [[], []];
+for (let h = 0; h < 2; h++) for (let i = 0; i < 21; i++) scratch[h].push({ x: 0, y: 0 });
+
+// Pinch: distancia cartesiana al cuadrado entre índice y pulgar.
+function pinchActive(lm: { x: number; y: number; z: number }[]): boolean {
+  const dx = lm[4].x - lm[8].x;
+  const dy = lm[4].y - lm[8].y;
+  return dx * dx + dy * dy < PINCH_DIST_SQ;
 }
 
-function isPinching(lm: { x: number; y: number; z: number }[]): boolean {
-  return Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y) < PINCH_THRESHOLD;
+// Conteo directo de dedos extendidos (sin buffer de suavizado).
+// Índice, medio, anular, meñique: punta más lejos de la muñeca que la PIP.
+// Pulgar: punta más lejos de la MCP (2) que la IP (3).
+function countFingers(lm: { x: number; y: number; z: number }[]): number {
+  if (!lm || lm.length < 21) return 0;
+  let n = 0;
+  // Pulgar
+  const td1 = (lm[4].x - lm[2].x) ** 2 + (lm[4].y - lm[2].y) ** 2;
+  const td2 = (lm[3].x - lm[2].x) ** 2 + (lm[3].y - lm[2].y) ** 2;
+  if (td1 > td2) n++;
+  // Los otros 4 dedos
+  for (let i = 1; i < 5; i++) {
+    const tip = FINGER_TIPS[i];
+    const pip = tip - 2;
+    const dx1 = lm[tip].x - lm[0].x;
+    const dy1 = lm[tip].y - lm[0].y;
+    const dx2 = lm[pip].x - lm[0].x;
+    const dy2 = lm[pip].y - lm[0].y;
+    if (dx1 * dx1 + dy1 * dy1 > dx2 * dx2 + dy2 * dy2) n++;
+  }
+  return n;
 }
 
 interface HandOverlayProps {
@@ -52,20 +58,6 @@ interface HandOverlayProps {
   onGesture?: (data: GestureData) => void;
 }
 
-/**
- * HandOverlay
- *
- * Inicializa HandLandmarker (tasks-vision) con GPU delegate y modelo Full.
- * Usa requestVideoFrameCallback para sincronizar inferencia con frames reales.
- *
- * Estrategia de video:
- *  1. Si `videoRef` tiene un <video> montado (desde CameraFeed), lo reusa
- *     para ahorrar un decodificador.
- *  2. Si no, crea un <video> oculto propio como fallback.
- *
- * `onGesture` se estabiliza con useRef para que el efecto no se reinicie
- * en cada render del padre (evita re-cargar WASM y modelo constantemente).
- */
 export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: HandOverlayProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const onGestureRef = useRef(onGesture);
@@ -82,16 +74,13 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
     let running = true;
     let callbackId: number | null = null;
 
-    // Estado de clasificación persistente entre frames
     let rawPrev: GestureCommand = 'NONE';
     let freezeFrames = 0;
     let freezeArmed = true;
 
-    // Dimensiones precalculadas
     let cw = 0, ch = 0, rw = 0, rh = 0, ox = 0, oy = 0;
     let dimsReady = false;
 
-    // Video: usar el compartido o crear uno oculto
     let videoEl = videoRef?.current ?? null;
     let ownsVideo = false;
 
@@ -201,16 +190,41 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
           const typedLabel: Handedness | undefined =
             label === 'Left' || label === 'Right' ? label : undefined;
 
-          const pts = lm.map((p) => ({
-            x: mirrored ? (1 - p.x) * rw + ox : p.x * rw + ox,
-            y: p.y * rh + oy,
-          }));
+          // Proyectar landmarks en coordenadas de canvas (sin alloc)
+          const buf = scratch[i];
+          for (let j = 0; j < 21; j++) {
+            const p = lm[j];
+            buf[j].x = mirrored ? (1 - p.x) * rw + ox : p.x * rw + ox;
+            buf[j].y = p.y * rh + oy;
+          }
 
-          drawHand(ctx, pts, color);
+          // Batch connections: un solo stroke()
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2;
+          ctx.globalAlpha = 0.7;
+          ctx.beginPath();
+          for (const [ci, cj] of CONNECTIONS) {
+            const a = buf[ci], b = buf[cj];
+            if (!a || !b) continue;
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+          }
+          ctx.stroke();
 
-          const pinching = isPinching(lm);
-          const pinchSx = (pts[4].x + pts[8].x) / 2;
-          const pinchSy = (pts[4].y + pts[8].y) / 2;
+          // Batch landmarks: un solo fill()
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          for (let j = 0; j < 21; j++) {
+            const p = buf[j];
+            ctx.moveTo(p.x + 3, p.y);
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+          }
+          ctx.fill();
+
+          const pinching = pinchActive(lm);
+          const pinchSx = (buf[4].x + buf[8].x) / 2;
+          const pinchSy = (buf[4].y + buf[8].y) / 2;
 
           if (i === 0) {
             gesture.hand1 = { active: pinching, sx: pinchSx, sy: pinchSy };
@@ -243,8 +257,8 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
       }
 
       gesture.command = command;
-      gesture.hand1FingersExtended = hand1Lm ? countExtendedFingers(hand1Lm, hand1Label, 'hand1') : 0;
-      gesture.hand2FingersExtended = hand2Lm ? countExtendedFingers(hand2Lm, hand2Label, 'hand2') : 0;
+      gesture.hand1FingersExtended = hand1Lm ? countFingers(hand1Lm) : 0;
+      gesture.hand2FingersExtended = hand2Lm ? countFingers(hand2Lm) : 0;
       gesture.commandConsumed = commandConsumed;
 
       onGestureRef.current?.(gesture);
