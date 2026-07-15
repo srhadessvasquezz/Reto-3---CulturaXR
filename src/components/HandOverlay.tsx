@@ -81,6 +81,10 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
     let cw = 0, ch = 0, rw = 0, rh = 0, ox = 0, oy = 0;
     let dimsReady = false;
 
+    // Auto-throttle: si la inferencia tomó >40ms, saltamos el
+    // siguiente frame para no acumular backlog.
+    let skipNextFrame = false;
+
     let videoEl = videoRef?.current ?? null;
     let ownsVideo = false;
 
@@ -107,10 +111,10 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
         handLandmarker = await HandLandmarker.createFromOptions(vision, {
           baseOptions: {
             modelAssetPath: modelPath,
-            delegate: 'GPU',
+            delegate: 'CPU',
           },
           runningMode: 'VIDEO',
-          numHands: 2,
+          numHands: 1,
           minHandDetectionConfidence: 0.4,
           minHandPresenceConfidence: 0.4,
           minTrackingConfidence: 0.4,
@@ -142,7 +146,7 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
     }
 
     function scheduleFrame() {
-      if (!running || !videoEl || !handLandmarker || !dimsReady) return;
+      if (!running || !videoEl || !handLandmarker || !dimsReady || videoEl.readyState < 2) return;
 
       if (typeof videoEl.requestVideoFrameCallback === 'function') {
         callbackId = videoEl.requestVideoFrameCallback(processFrame);
@@ -164,7 +168,21 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
     function processFrame(now: DOMHighResTimeStamp) {
       if (!running || !handLandmarker || !videoEl) return;
 
+      // Auto-throttle: si la inferencia anterior fue lenta, saltamos
+      // este frame. El canvas no se limpia, los landmarks anteriores
+      // persisten visualmente.
+      if (skipNextFrame) {
+        skipNextFrame = false;
+        scheduleFrame();
+        return;
+      }
+
+      const t0 = performance.now();
       const results = handLandmarker.detectForVideo(videoEl, now);
+      const elapsed = performance.now() - t0;
+      // Si el frame tomó > 40ms (<25fps), saltar el siguiente para
+      // no acumular backlog.
+      skipNextFrame = elapsed > 40;
       ctx.clearRect(0, 0, cw, ch);
 
       const gesture: GestureData = {
@@ -263,13 +281,7 @@ export function HandOverlay({ stream, videoRef, mirrored = true, onGesture }: Ha
 
       onGestureRef.current?.(gesture);
 
-      if (running && videoEl.readyState >= 2) {
-        if (typeof videoEl.requestVideoFrameCallback === 'function') {
-          callbackId = videoEl.requestVideoFrameCallback(processFrame);
-        } else {
-          callbackId = window.setTimeout(() => processFrame(performance.now()), 33);
-        }
-      }
+      scheduleFrame();
     }
 
     if (videoEl.readyState >= 2) {
